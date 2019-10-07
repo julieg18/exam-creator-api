@@ -1,6 +1,10 @@
 const express = require('express');
 
+const { addExamToDatabase } = require('./controller');
+
 const examRoutes = express.Router();
+
+examRoutes.route('/').post(addExamToDatabase);
 
 examRoutes
   .route('/:examId')

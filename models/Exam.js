@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const { Schema, model } = mongoose;
 
-const QuestionsSchema = new Schema = ({
+const QuestionsSchema = new Schema({
   name: {
     type: String,
     required: true,
@@ -11,10 +11,14 @@ const QuestionsSchema = new Schema = ({
     type: String,
     required: true,
   },
-  options: [String]
-})
+  options: [{ type: String, required: true }],
+  answer: {
+    type: String,
+    required: true,
+  },
+});
 
-const studentsSchema = new Schema = ({
+const StudentsSchema = new Schema({
   name: {
     type: String,
     required: true,
@@ -28,7 +32,7 @@ const studentsSchema = new Schema = ({
     required: true,
   },
   results: String,
-})
+});
 
 const ExamSchema = new Schema({
   creator: {
@@ -44,8 +48,8 @@ const ExamSchema = new Schema({
     required: true,
   },
   questions: [QuestionsSchema],
-  students: [studentsSchema],
-})
+  students: [StudentsSchema],
+});
 
 const Exam = model('Exam', ExamSchema);
 
