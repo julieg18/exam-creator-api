@@ -1,4 +1,4 @@
-const express = require('express');
+import express from 'express';
 
 const userRoutes = express.Router();
 
@@ -19,4 +19,4 @@ userRoutes.route('/signup').post((req, res, next) => {
   res.send('this route should be used to signup a user');
 });
 
-module.exports = userRoutes;
+export default userRoutes;

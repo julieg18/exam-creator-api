@@ -1,4 +1,4 @@
-const Exam = require('../../models/Exam');
+import Exam from '../../models/Exam';
 
 async function addExamToDatabase(req, res) {
   const { title, creator, numberOfQuestions, questions, students } = req.body;
@@ -17,4 +17,4 @@ async function addExamToDatabase(req, res) {
   res.json({ message: 'exam created', exam: newExam });
 }
 
-module.exports = { addExamToDatabase };
+export { addExamToDatabase };

@@ -1,6 +1,6 @@
-const express = require('express');
+import express from 'express';
 
-const { addExamToDatabase } = require('./controller');
+import { addExamToDatabase } from './controller';
 
 const examRoutes = express.Router();
 
@@ -22,4 +22,4 @@ examRoutes.route('/user/:userId').get((req, res) => {
   res.send("this route should get a user's exam");
 });
 
-module.exports = examRoutes;
+export default examRoutes;
