@@ -4,7 +4,7 @@
   "description": "A website for creating online exams.",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "nodemon --exec babel-node server.js"
   },
   "author": "Julie Galvan",
   "license": "ISC",
@@ -18,5 +18,10 @@
     "mongoose": "^5.7.1",
     "passport": "^0.4.0",
     "passport-local": "^1.0.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.6.3",
+    "@babel/node": "^7.6.3",
+    "@babel/preset-env": "^7.6.3"
   }
 }
