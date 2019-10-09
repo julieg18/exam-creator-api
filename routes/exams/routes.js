@@ -1,10 +1,13 @@
 import express from 'express';
 
+import { doesCreateExamRequestHaveRequiredParams } from './middleware';
 import { addExamToDatabase } from './controller';
 
 const examRoutes = express.Router();
 
-examRoutes.route('/').post(addExamToDatabase);
+examRoutes
+  .route('/')
+  .post(doesCreateExamRequestHaveRequiredParams, addExamToDatabase);
 
 examRoutes
   .route('/:examId')
