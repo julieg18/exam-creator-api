@@ -1,13 +1,20 @@
 import express from 'express';
 
-import { doesCreateExamRequestHaveRequiredParams } from './middleware';
+import {
+  doesCreateExamRequestHaveRequiredParams,
+  areCreateExamRequestParamsCorrectTypes,
+} from './middleware';
 import { addExamToDatabase } from './controller';
 
 const examRoutes = express.Router();
 
 examRoutes
   .route('/')
-  .post(doesCreateExamRequestHaveRequiredParams, addExamToDatabase);
+  .post(
+    doesCreateExamRequestHaveRequiredParams,
+    areCreateExamRequestParamsCorrectTypes,
+    addExamToDatabase,
+  );
 
 examRoutes
   .route('/:examId')
