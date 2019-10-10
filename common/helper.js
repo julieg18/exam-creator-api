@@ -5,7 +5,7 @@ function isValueCorrectType(value, type) {
       isValueTypeValidated = typeof value === 'string';
       break;
     case 'number':
-      isValueTypeValidated = typeof value === 'number';
+      isValueTypeValidated = typeof value === 'number' && !Number.isNaN(value);
       break;
     case 'boolean':
       isValueTypeValidated = typeof value === 'boolean';
@@ -29,28 +29,28 @@ function doesObjectHaveRequiredProperties(obj, propsArray) {
       missingProps.push(prop);
     }
   });
-  return missingProps.length === 0;
+  return { doesObjHaveRequiredProps: missingProps.length === 0, missingProps };
 }
 
-function createWordList(wordArray) {
-  let wordList = '';
-  switch (wordArray.length) {
+function createList(listArray) {
+  let list = '';
+  switch (listArray.length) {
     case 0:
-      wordList = '';
+      list = '';
       break;
     case 1:
-      wordList = `${wordArray[0]}`;
+      list = `${listArray[0]}`;
       break;
     case 2:
-      wordList = `${wordArray[0]} and ${wordArray[1]}`;
+      list = `${listArray[0]} and ${listArray[1]}`;
       break;
     default:
-      for (let i = 0; i < wordArray.length - 1; i += 1) {
-        wordList += `${wordArray[i]}, `;
+      for (let i = 0; i < listArray.length - 1; i += 1) {
+        list += `${listArray[i]}, `;
       }
-      wordList += `and ${wordArray[wordArray.length - 1]}`;
+      list += `and ${listArray[listArray.length - 1]}`;
   }
-  return wordList;
+  return list;
 }
 
-export { isValueCorrectType, doesObjectHaveRequiredProperties, createWordList };
+export { isValueCorrectType, doesObjectHaveRequiredProperties, createList };
