@@ -3,7 +3,15 @@ import express from 'express';
 import {
   doesCreateExamRequestHaveRequiredParams,
   areCreateExamRequestParamsCorrectTypes,
-} from './middleware';
+  doesQuestionsArrayHaveObjElements,
+  doesStudentsArrayHaveObjElements,
+  doesQuestionsArrayElementsHaveRequiredParams,
+  doesStudentsArrayElementsHaveRequiredParams,
+  areQuestionsArrayElementsParamsCorrectTypes,
+  areStudentsArrayElementsParamsCorrectTypes,
+  doesQuestionsArrayElementsHaveCorrectParamsForType,
+  doesStudentArrayElementsHaveUniqueIds,
+} from './middleware/createExamMiddleware';
 import { addExamToDatabase } from './controller';
 
 const examRoutes = express.Router();
@@ -13,6 +21,14 @@ examRoutes
   .post(
     doesCreateExamRequestHaveRequiredParams,
     areCreateExamRequestParamsCorrectTypes,
+    doesQuestionsArrayHaveObjElements,
+    doesStudentsArrayHaveObjElements,
+    doesQuestionsArrayElementsHaveRequiredParams,
+    doesStudentsArrayElementsHaveRequiredParams,
+    areQuestionsArrayElementsParamsCorrectTypes,
+    areStudentsArrayElementsParamsCorrectTypes,
+    doesQuestionsArrayElementsHaveCorrectParamsForType,
+    doesStudentArrayElementsHaveUniqueIds,
     addExamToDatabase,
   );
 
