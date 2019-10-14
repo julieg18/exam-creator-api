@@ -1,8 +1,10 @@
+import { isValueCorrectType, createList } from '../../../common/helper';
+
 import {
-  isValueCorrectType,
-  doesObjectHaveRequiredProperties,
-  createList,
-} from '../../../common/helper';
+  doesQuestionHaveRequiredParams,
+  areQuestionParamsCorrectTypes,
+  doesQuestionHaveCorrectParamsForType,
+} from '../helper';
 
 function doesQuestionsArrayHaveObjElements(req, res, next) {
   const { questions } = req.body;
@@ -19,13 +21,8 @@ function doesQuestionsArrayHaveObjElements(req, res, next) {
 
 function doesQuestionsArrayElementsHaveRequiredParams(req, res, next) {
   const { questions } = req.body;
-  const requiredParams = ['name', 'type', 'options', 'answer'];
   const doesQuestionsArrHaveRequiredParams = questions.every((question) => {
-    const { doesObjHaveRequiredProps } = doesObjectHaveRequiredProperties(
-      question,
-      requiredParams,
-    );
-    return doesObjHaveRequiredProps;
+    return doesQuestionHaveRequiredParams(question);
   });
   if (doesQuestionsArrHaveRequiredParams) {
     next();
@@ -42,40 +39,13 @@ function areQuestionsArrayElementsParamsCorrectTypes(req, res, next) {
   const { questions } = req.body;
   const incorrectTypeParamErrs = [];
   questions.forEach((question) => {
-    const params = Object.keys(question);
-    params.forEach((param) => {
-      const paramValue = question[param];
-      switch (param) {
-        case 'name':
-          if (!isValueCorrectType(paramValue, 'string')) {
-            incorrectTypeParamErrs.push('name must be a string');
-          }
-          break;
-        case 'type':
-          if (
-            paramValue !== 'radio' &&
-            paramValue !== 'checkbox' &&
-            paramValue !== 'true_false'
-          ) {
-            incorrectTypeParamErrs.push(
-              "question type param must equal 'radio', 'checkbox', or 'true_false'",
-            );
-          }
-          break;
-        case 'options':
-          if (!isValueCorrectType(paramValue, 'array')) {
-            incorrectTypeParamErrs.push('options must be an array');
-          }
-          break;
-        case 'answer':
-          if (!isValueCorrectType(paramValue, 'string')) {
-            incorrectTypeParamErrs.push('answer must be a string');
-          }
-          break;
-        default:
-          return param;
-      }
-    });
+    const {
+      areQuestionParamsTheCorrectTypes,
+      incorrectTypeParamErrsArr,
+    } = areQuestionParamsCorrectTypes(question);
+    if (!areQuestionParamsTheCorrectTypes) {
+      incorrectTypeParamErrs.push(...incorrectTypeParamErrsArr);
+    }
   });
   if (incorrectTypeParamErrs.length === 0) {
     next();
@@ -96,21 +66,17 @@ function doesQuestionsArrayElementsHaveCorrectParamsForType(req, res, next) {
   const typeTrueOrFalseErrors = [];
   const typeRadioOrCheckBoxErrors = [];
   questions.forEach((question) => {
-    const { type, options, answer } = question;
-    if (type === 'true_false') {
-      if (answer !== 'true' && answer !== 'false') {
-        typeTrueOrFalseErrors.push("answer must be 'true' or 'false'");
-      }
-      if (options.length !== 0) {
-        typeTrueOrFalseErrors.push('options must be an empty array');
-      }
-    } else {
-      if (options.length === 0) {
-        typeRadioOrCheckBoxErrors.push('options must not be a empty array');
-      }
-      if (!options.includes(answer)) {
-        typeRadioOrCheckBoxErrors.push('options must include answer');
-      }
+    const {
+      doTrueOrFalseErrorsExist,
+      doRadioOrCheckBoxErrorsExist,
+      typeTrueOrFalseErrorsArr,
+      typeRadioOrCheckBoxErrorsArr,
+    } = doesQuestionHaveCorrectParamsForType(question);
+    if (doTrueOrFalseErrorsExist) {
+      typeTrueOrFalseErrors.push(...typeTrueOrFalseErrorsArr);
+    }
+    if (doRadioOrCheckBoxErrorsExist) {
+      typeRadioOrCheckBoxErrors.push(...typeRadioOrCheckBoxErrorsArr);
     }
   });
   if (typeTrueOrFalseErrors.length !== 0) {
