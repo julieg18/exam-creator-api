@@ -1,7 +1,7 @@
 import {
   isValueCorrectType,
-  doesObjectHaveRequiredProperties,
   createList,
+  doesRequestHaveRequiredParams,
 } from '../../../common/helper';
 import { isExamIdValid } from '../helper';
 
@@ -19,17 +19,31 @@ async function checkIfExamIdIsValid(req, res, next) {
 function doesCreateExamRequestHaveRequiredParams(req, res, next) {
   const requiredExamParams = ['creator', 'title'];
   const {
-    doesObjHaveRequiredProps,
-    missingProps,
-  } = doesObjectHaveRequiredProperties(req.body, requiredExamParams);
-  if (doesObjHaveRequiredProps) {
+    doesReqHaveRequiredParams,
+    errorMessage,
+  } = doesRequestHaveRequiredParams(requiredExamParams, req.body);
+  if (doesReqHaveRequiredParams) {
     next();
   } else {
     res.status(400);
     res.json({
-      error: `${createList(missingProps)} ${
-        missingProps.length === 1 ? 'is' : 'are'
-      } required`,
+      error: errorMessage,
+    });
+  }
+}
+
+function doesEditExamRequestHaveRequiredParams(req, res, next) {
+  const requiredExamParams = ['title'];
+  const {
+    doesReqHaveRequiredParams,
+    errorMessage,
+  } = doesRequestHaveRequiredParams(requiredExamParams, req.body);
+  if (doesReqHaveRequiredParams) {
+    next();
+  } else {
+    res.status(400);
+    res.json({
+      error: errorMessage,
     });
   }
 }
@@ -72,8 +86,20 @@ function areCreateExamRequestParamsCorrectTypes(req, res, next) {
   }
 }
 
+function isEditExamRequestParamCorrectType(req, res, next) {
+  const { title } = req.body;
+  if (isValueCorrectType(title, 'string')) {
+    next();
+  } else {
+    res.status(400);
+    res.json({ error: 'title must be a string' });
+  }
+}
+
 export {
   checkIfExamIdIsValid,
   doesCreateExamRequestHaveRequiredParams,
+  doesEditExamRequestHaveRequiredParams,
   areCreateExamRequestParamsCorrectTypes,
+  isEditExamRequestParamCorrectType,
 };

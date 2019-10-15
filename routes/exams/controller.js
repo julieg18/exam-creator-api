@@ -27,6 +27,18 @@ async function getExam(req, res) {
   res.json({ message: 'exam found', exam });
 }
 
+async function editExamTitle(req, res) {
+  const { examId } = req.params;
+  const { title } = req.body;
+  const updatedExam = await Exam.findByIdAndUpdate(
+    examId,
+    { $set: { title } },
+    { new: true, useFindAndModify: false },
+  );
+  res.status(200);
+  res.json({ message: 'exam title updated', updatedExam });
+}
+
 async function deleteExamFromDatabase(req, res) {
   const { examId } = req.params;
   await Exam.findByIdAndDelete(examId);
@@ -34,4 +46,15 @@ async function deleteExamFromDatabase(req, res) {
   res.json({ message: 'exam deleted' });
 }
 
-export { addExamToDatabase, getExam, deleteExamFromDatabase };
+async function addQuestion(req, res) {
+  res.status(201);
+  res.json({ message: 'question added to exam', exam: 'exam here' });
+}
+
+export {
+  addExamToDatabase,
+  getExam,
+  editExamTitle,
+  deleteExamFromDatabase,
+  addQuestion,
+};

@@ -1,14 +1,14 @@
+import { isValueCorrectType, createList } from '../../../common/helper';
 import {
-  isValueCorrectType,
-  doesObjectHaveRequiredProperties,
-  createList,
-} from '../../../common/helper';
+  doesStudentHaveRequiredParams,
+  areStudentParamsCorrectTypes,
+} from '../helper';
 
 function doesStudentsArrayHaveObjElements(req, res, next) {
   const { students } = req.body;
-  const doesStudentsArrHaveObjElements = students.every((student) => {
-    return isValueCorrectType(student, 'object');
-  });
+  const doesStudentsArrHaveObjElements = students.every((student) =>
+    isValueCorrectType(student, 'object'),
+  );
   if (doesStudentsArrHaveObjElements) {
     next();
   } else {
@@ -19,14 +19,9 @@ function doesStudentsArrayHaveObjElements(req, res, next) {
 
 function doesStudentsArrayElementsHaveRequiredParams(req, res, next) {
   const { students } = req.body;
-  const requiredParams = ['name', 'studentId', 'takenTest'];
-  const doesStudentsArrHaveRequiredParams = students.every((student) => {
-    const { doesObjHaveRequiredProps } = doesObjectHaveRequiredProperties(
-      student,
-      requiredParams,
-    );
-    return doesObjHaveRequiredProps;
-  });
+  const doesStudentsArrHaveRequiredParams = students.every((student) =>
+    doesStudentHaveRequiredParams(student),
+  );
   if (doesStudentsArrHaveRequiredParams) {
     next();
   } else {
@@ -42,29 +37,14 @@ function areStudentsArrayElementsParamsCorrectTypes(req, res, next) {
   const { students } = req.body;
   const incorrectTypeParamErrs = [];
   students.forEach((student) => {
-    const params = Object.keys(student);
-    params.forEach((param) => {
-      const paramValue = student[param];
-      switch (param) {
-        case 'name':
-          if (!isValueCorrectType(paramValue, 'string')) {
-            incorrectTypeParamErrs.push('name must be a string');
-          }
-          break;
-        case 'studentId':
-          if (!isValueCorrectType(paramValue, 'string')) {
-            incorrectTypeParamErrs.push('studentId must be a string');
-          }
-          break;
-        case 'takenTest':
-          if (!isValueCorrectType(paramValue, 'boolean')) {
-            incorrectTypeParamErrs.push('takenTest must be an boolean');
-          }
-          break;
-        default:
-          return param;
-      }
-    });
+    const {
+      doesStudentHaveCorrectTypes,
+      incorrectTypeParamErrsArr,
+    } = areStudentParamsCorrectTypes(student);
+    if (!doesStudentHaveCorrectTypes) {
+      incorrectTypeParamErrs.push(...incorrectTypeParamErrsArr);
+    }
+    return student;
   });
   if (incorrectTypeParamErrs.length === 0) {
     next();

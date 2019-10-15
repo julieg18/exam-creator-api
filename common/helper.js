@@ -53,4 +53,22 @@ function createList(listArray) {
   return list;
 }
 
-export { isValueCorrectType, doesObjectHaveRequiredProperties, createList };
+function doesRequestHaveRequiredParams(requiredParams, request) {
+  const {
+    doesObjHaveRequiredProps,
+    missingProps,
+  } = doesObjectHaveRequiredProperties(request, requiredParams);
+  return {
+    doesReqHaveRequiredParams: doesObjHaveRequiredProps,
+    errorMessage: `${createList(missingProps)} ${
+      missingProps.length === 1 ? 'is' : 'are'
+    } required`,
+  };
+}
+
+export {
+  isValueCorrectType,
+  doesObjectHaveRequiredProperties,
+  createList,
+  doesRequestHaveRequiredParams,
+};

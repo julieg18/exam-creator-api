@@ -64,11 +64,11 @@ function areQuestionParamsCorrectTypes(question) {
       default:
         return param;
     }
+    return param;
   });
-  const incorrectTypeParamErrsSet = new Set(incorrectTypeParamErrs);
   return {
-    areQuestionParamsTheCorrectTypes: incorrectTypeParamErrsSet.size === 0,
-    incorrectTypeParamErrsArr: [...incorrectTypeParamErrsSet],
+    areQuestionParamsTheCorrectTypes: incorrectTypeParamErrs.length === 0,
+    incorrectTypeParamErrsArr: incorrectTypeParamErrs,
   };
 }
 
@@ -101,10 +101,55 @@ function doesQuestionHaveCorrectParamsForType(question) {
   };
 }
 
+function doesStudentHaveRequiredParams(student) {
+  const requiredParams = ['name', 'studentId', 'takenTest'];
+  const { doesObjHaveRequiredProps } = doesObjectHaveRequiredProperties(
+    student,
+    requiredParams,
+  );
+  return doesObjHaveRequiredProps;
+}
+
+function areStudentParamsCorrectTypes(student) {
+  const incorrectTypeParamErrs = [];
+  const params = Object.keys(student);
+  params.forEach((param) => {
+    const paramValue = student[param];
+    switch (param) {
+      case 'name':
+        if (!isValueCorrectType(paramValue, 'string')) {
+          incorrectTypeParamErrs.push('name must be a string');
+        }
+        break;
+      case 'studentId':
+        if (!isValueCorrectType(paramValue, 'string')) {
+          incorrectTypeParamErrs.push('studentId must be a string');
+        }
+        break;
+      case 'takenTest':
+        if (!isValueCorrectType(paramValue, 'boolean')) {
+          incorrectTypeParamErrs.push('takenTest must be an boolean');
+        }
+        break;
+      default:
+        return param;
+    }
+    return param;
+  });
+  const incorrectTypeParamErrsSet = new Set(incorrectTypeParamErrs);
+  const incorrectTypeParamErrsArr = [...incorrectTypeParamErrsSet];
+  return {
+    doesStudentHaveCorrectTypes: incorrectTypeParamErrs.length === 0,
+    incorrectTypeParamErrsArr,
+  };
+}
+
 export {
   isExamIdValid,
   getExamFromDatabase,
   doesQuestionHaveRequiredParams,
   areQuestionParamsCorrectTypes,
   doesQuestionHaveCorrectParamsForType,
+  doesStudentHaveRequiredParams,
+  areStudentParamsCorrectTypes,
 };

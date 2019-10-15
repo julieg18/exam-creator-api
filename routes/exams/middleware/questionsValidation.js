@@ -1,4 +1,8 @@
-import { isValueCorrectType, createList } from '../../../common/helper';
+import {
+  isValueCorrectType,
+  createList,
+  doesRequestHaveRequiredParams,
+} from '../../../common/helper';
 
 import {
   doesQuestionHaveRequiredParams,
@@ -106,9 +110,63 @@ function doesQuestionsArrayElementsHaveCorrectParamsForType(req, res, next) {
   }
 }
 
+function doesAddQuestionRequestHaveRequiredParams(req, res, next) {
+  const requiredQuestionParams = ['name', 'type', 'options', 'answer'];
+  const {
+    doesReqHaveRequiredParams,
+    errorMessage,
+  } = doesRequestHaveRequiredParams(requiredQuestionParams, req.body);
+  if (doesReqHaveRequiredParams) {
+    next();
+  } else {
+    res.status(400);
+    res.json({
+      error: errorMessage,
+    });
+  }
+}
+
+function areAddQuestionRequestParamsCorrectTypes(req, res, next) {
+  const {
+    areQuestionParamsTheCorrectTypes,
+    incorrectTypeParamErrsArr,
+  } = areQuestionParamsCorrectTypes(req.body);
+  if (areQuestionParamsTheCorrectTypes) {
+    next();
+  } else {
+    res.status(400);
+    res.json({ error: createList(incorrectTypeParamErrsArr) });
+  }
+}
+
+function doesAddQuestionRequestHaveCorrectParamsForType(req, res, next) {
+  const {
+    doTrueOrFalseErrorsExist,
+    doRadioOrCheckBoxErrorsExist,
+    typeTrueOrFalseErrorsArr,
+    typeRadioOrCheckBoxErrorsArr,
+  } = doesQuestionHaveCorrectParamsForType(req.body);
+  if (!doTrueOrFalseErrorsExist && !doRadioOrCheckBoxErrorsExist) {
+    next();
+  } else {
+    const error = doTrueOrFalseErrorsExist
+      ? `for a question with a true_false type, ${createList([
+          ...typeTrueOrFalseErrorsArr,
+        ])}`
+      : `for a question with a radio or checkbox type, ${createList([
+          ...typeRadioOrCheckBoxErrorsArr,
+        ])}`;
+    res.status(400);
+    res.json({ error });
+  }
+}
+
 export {
   doesQuestionsArrayHaveObjElements,
   doesQuestionsArrayElementsHaveRequiredParams,
   areQuestionsArrayElementsParamsCorrectTypes,
   doesQuestionsArrayElementsHaveCorrectParamsForType,
+  doesAddQuestionRequestHaveRequiredParams,
+  areAddQuestionRequestParamsCorrectTypes,
+  doesAddQuestionRequestHaveCorrectParamsForType,
 };
