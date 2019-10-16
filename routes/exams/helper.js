@@ -15,9 +15,25 @@ async function isExamIdValid(examId) {
   return isIdValid;
 }
 
+async function isQuestionIdValid(examId, questionId) {
+  const exam = await Exam.findById(examId);
+  const isIdValid = exam.questions.some((question) => {
+    return question._id == questionId;
+  });
+  return isIdValid;
+}
+
 async function getExamFromDatabase(examId) {
   const exam = await Exam.findById(examId);
   return exam;
+}
+
+async function getQuestionFromDatabase(examId, questionId) {
+  const exam = await Exam.findById(examId);
+  const requestedQuestion = exam.questions.find(
+    (question) => question._id == questionId,
+  );
+  return requestedQuestion;
 }
 
 function doesQuestionHaveRequiredParams(question) {
@@ -35,6 +51,11 @@ function areQuestionParamsCorrectTypes(question) {
   params.forEach((param) => {
     const paramValue = question[param];
     switch (param) {
+      case 'questionId':
+        if (!isValueCorrectType(paramValue, 'string')) {
+          incorrectTypeParamErrs.push('questionId must be a string');
+        }
+        break;
       case 'name':
         if (!isValueCorrectType(paramValue, 'string')) {
           incorrectTypeParamErrs.push('name must be a string');
@@ -146,7 +167,9 @@ function areStudentParamsCorrectTypes(student) {
 
 export {
   isExamIdValid,
+  isQuestionIdValid,
   getExamFromDatabase,
+  getQuestionFromDatabase,
   doesQuestionHaveRequiredParams,
   areQuestionParamsCorrectTypes,
   doesQuestionHaveCorrectParamsForType,

@@ -5,10 +5,24 @@ import {
 } from '../../../common/helper';
 
 import {
+  isQuestionIdValid,
+  getQuestionFromDatabase,
   doesQuestionHaveRequiredParams,
   areQuestionParamsCorrectTypes,
   doesQuestionHaveCorrectParamsForType,
 } from '../helper';
+
+async function checkIfQuestionIdIsValid(req, res, next) {
+  const { examId } = req.params;
+  const { questionId } = req.body;
+  const isIdValid = await isQuestionIdValid(examId, questionId);
+  if (isIdValid) {
+    next();
+  } else {
+    res.status(400);
+    res.json({ error: 'invalid questionId' });
+  }
+}
 
 function doesQuestionsArrayHaveObjElements(req, res, next) {
   const { questions } = req.body;
@@ -39,6 +53,49 @@ function doesQuestionsArrayElementsHaveRequiredParams(req, res, next) {
   }
 }
 
+function doesAddQuestionRequestHaveRequiredParams(req, res, next) {
+  const requiredQuestionParams = ['name', 'type', 'options', 'answer'];
+  const {
+    doesReqHaveRequiredParams,
+    errorMessage,
+  } = doesRequestHaveRequiredParams(requiredQuestionParams, req.body);
+  if (doesReqHaveRequiredParams) {
+    next();
+  } else {
+    res.status(400);
+    res.json({
+      error: errorMessage,
+    });
+  }
+}
+
+function doesEditQuestionRequestHaveRequiredParams(req, res, next) {
+  const requiredQuestionParams = [
+    ['questionId', 'name'],
+    ['questionId', 'type'],
+    ['questionId', 'options'],
+    ['questionId', 'answer'],
+  ];
+  const doesEditQuestionReqHaveRequiredParams = requiredQuestionParams.some(
+    (requiredParams) => {
+      const { doesReqHaveRequiredParams } = doesRequestHaveRequiredParams(
+        requiredParams,
+        req.body,
+      );
+      return doesReqHaveRequiredParams;
+    },
+  );
+  if (doesEditQuestionReqHaveRequiredParams) {
+    next();
+  } else {
+    res.status(400);
+    res.json({
+      error:
+        'questionId and at least one param(type, options, name, or answer) to be changed is required',
+    });
+  }
+}
+
 function areQuestionsArrayElementsParamsCorrectTypes(req, res, next) {
   const { questions } = req.body;
   const incorrectTypeParamErrs = [];
@@ -61,6 +118,19 @@ function areQuestionsArrayElementsParamsCorrectTypes(req, res, next) {
         ...uniqueErrsSet,
       ])}`,
     });
+  }
+}
+
+function areQuestionRequestParamsCorrectTypes(req, res, next) {
+  const {
+    areQuestionParamsTheCorrectTypes,
+    incorrectTypeParamErrsArr,
+  } = areQuestionParamsCorrectTypes(req.body);
+  if (areQuestionParamsTheCorrectTypes) {
+    next();
+  } else {
+    res.status(400);
+    res.json({ error: createList(incorrectTypeParamErrsArr) });
   }
 }
 
@@ -110,35 +180,6 @@ function doesQuestionsArrayElementsHaveCorrectParamsForType(req, res, next) {
   }
 }
 
-function doesAddQuestionRequestHaveRequiredParams(req, res, next) {
-  const requiredQuestionParams = ['name', 'type', 'options', 'answer'];
-  const {
-    doesReqHaveRequiredParams,
-    errorMessage,
-  } = doesRequestHaveRequiredParams(requiredQuestionParams, req.body);
-  if (doesReqHaveRequiredParams) {
-    next();
-  } else {
-    res.status(400);
-    res.json({
-      error: errorMessage,
-    });
-  }
-}
-
-function areAddQuestionRequestParamsCorrectTypes(req, res, next) {
-  const {
-    areQuestionParamsTheCorrectTypes,
-    incorrectTypeParamErrsArr,
-  } = areQuestionParamsCorrectTypes(req.body);
-  if (areQuestionParamsTheCorrectTypes) {
-    next();
-  } else {
-    res.status(400);
-    res.json({ error: createList(incorrectTypeParamErrsArr) });
-  }
-}
-
 function doesAddQuestionRequestHaveCorrectParamsForType(req, res, next) {
   const {
     doTrueOrFalseErrorsExist,
@@ -161,12 +202,49 @@ function doesAddQuestionRequestHaveCorrectParamsForType(req, res, next) {
   }
 }
 
+async function doesEditQuestionRequestHaveCorrectParamsForType(req, res, next) {
+  const { examId } = req.params;
+  const { questionId } = req.body;
+  const questionParams = ['name', 'type', 'options', 'answer'];
+  const questionToBeEdited = await getQuestionFromDatabase(examId, questionId);
+  const questionObject = {};
+  questionParams.forEach((param) => {
+    questionObject[param] = req.body[param]
+      ? req.body[param]
+      : questionToBeEdited[param];
+    return param;
+  });
+
+  const {
+    doTrueOrFalseErrorsExist,
+    doRadioOrCheckBoxErrorsExist,
+    typeTrueOrFalseErrorsArr,
+    typeRadioOrCheckBoxErrorsArr,
+  } = doesQuestionHaveCorrectParamsForType(questionObject);
+  if (!doTrueOrFalseErrorsExist && !doRadioOrCheckBoxErrorsExist) {
+    next();
+  } else {
+    const error = doTrueOrFalseErrorsExist
+      ? `for a question with a true_false type, ${createList([
+          ...typeTrueOrFalseErrorsArr,
+        ])}`
+      : `for a question with a radio or checkbox type, ${createList([
+          ...typeRadioOrCheckBoxErrorsArr,
+        ])}`;
+    res.status(400);
+    res.json({ error });
+  }
+}
+
 export {
+  checkIfQuestionIdIsValid,
   doesQuestionsArrayHaveObjElements,
   doesQuestionsArrayElementsHaveRequiredParams,
-  areQuestionsArrayElementsParamsCorrectTypes,
-  doesQuestionsArrayElementsHaveCorrectParamsForType,
   doesAddQuestionRequestHaveRequiredParams,
-  areAddQuestionRequestParamsCorrectTypes,
+  doesEditQuestionRequestHaveRequiredParams,
+  areQuestionsArrayElementsParamsCorrectTypes,
+  areQuestionRequestParamsCorrectTypes,
+  doesQuestionsArrayElementsHaveCorrectParamsForType,
   doesAddQuestionRequestHaveCorrectParamsForType,
+  doesEditQuestionRequestHaveCorrectParamsForType,
 };

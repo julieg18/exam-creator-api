@@ -6,13 +6,16 @@ import {
   doesEditExamRequestHaveRequiredParams,
   areCreateExamRequestParamsCorrectTypes,
   isEditExamRequestParamCorrectType,
+  checkIfQuestionIdIsValid,
   doesQuestionsArrayHaveObjElements,
   doesQuestionsArrayElementsHaveRequiredParams,
-  areQuestionsArrayElementsParamsCorrectTypes,
-  doesQuestionsArrayElementsHaveCorrectParamsForType,
   doesAddQuestionRequestHaveRequiredParams,
-  areAddQuestionRequestParamsCorrectTypes,
+  doesEditQuestionRequestHaveRequiredParams,
+  areQuestionsArrayElementsParamsCorrectTypes,
+  areQuestionRequestParamsCorrectTypes,
+  doesQuestionsArrayElementsHaveCorrectParamsForType,
   doesAddQuestionRequestHaveCorrectParamsForType,
+  doesEditQuestionRequestHaveCorrectParamsForType,
   doesStudentsArrayHaveObjElements,
   doesStudentsArrayElementsHaveRequiredParams,
   areStudentsArrayElementsParamsCorrectTypes,
@@ -24,6 +27,8 @@ import {
   editExamTitle,
   deleteExamFromDatabase,
   addQuestion,
+  editQuestion,
+  deleteQuestion,
 } from './controller';
 
 const examRoutes = express.Router();
@@ -60,16 +65,19 @@ examRoutes
   .post(
     checkIfExamIdIsValid,
     doesAddQuestionRequestHaveRequiredParams,
-    areAddQuestionRequestParamsCorrectTypes,
+    areQuestionRequestParamsCorrectTypes,
     doesAddQuestionRequestHaveCorrectParamsForType,
     addQuestion,
   )
-  .put((req, res) => {
-    res.send('this route should edit a exam question');
-  })
-  .delete((req, res) => {
-    res.send('this route should delete a exam question');
-  });
+  .put(
+    checkIfExamIdIsValid,
+    doesEditQuestionRequestHaveRequiredParams,
+    areQuestionRequestParamsCorrectTypes,
+    doesEditQuestionRequestHaveCorrectParamsForType,
+    checkIfQuestionIdIsValid,
+    editQuestion,
+  )
+  .delete(checkIfExamIdIsValid, checkIfQuestionIdIsValid, deleteQuestion);
 
 examRoutes
   .route('/students/:examId')
