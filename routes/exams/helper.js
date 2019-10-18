@@ -23,6 +23,14 @@ async function isQuestionIdValid(examId, questionId) {
   return isIdValid;
 }
 
+async function isStudentIdValid(examId, studentId) {
+  const exam = await Exam.findById(examId);
+  const isIdValid = exam.students.some((student) => {
+    return student._id == studentId;
+  });
+  return isIdValid;
+}
+
 async function getExamFromDatabase(examId) {
   const exam = await Exam.findById(examId);
   return exam;
@@ -123,7 +131,7 @@ function doesQuestionHaveCorrectParamsForType(question) {
 }
 
 function doesStudentHaveRequiredParams(student) {
-  const requiredParams = ['name', 'studentId', 'takenTest'];
+  const requiredParams = ['name'];
   const { doesObjHaveRequiredProps } = doesObjectHaveRequiredProperties(
     student,
     requiredParams,
@@ -142,14 +150,29 @@ function areStudentParamsCorrectTypes(student) {
           incorrectTypeParamErrs.push('name must be a string');
         }
         break;
+      case 'takenTest':
+        if (!isValueCorrectType(paramValue, 'boolean')) {
+          incorrectTypeParamErrs.push('takenTest must be an boolean');
+        }
+        break;
       case 'studentId':
         if (!isValueCorrectType(paramValue, 'string')) {
           incorrectTypeParamErrs.push('studentId must be a string');
         }
         break;
-      case 'takenTest':
-        if (!isValueCorrectType(paramValue, 'boolean')) {
-          incorrectTypeParamErrs.push('takenTest must be an boolean');
+      case 'questionsTaken':
+        if (!isValueCorrectType(paramValue, 'array')) {
+          incorrectTypeParamErrs.push('questionsTaken must be an array');
+        }
+        break;
+      case 'questionsCorrect':
+        if (!isValueCorrectType(paramValue, 'array')) {
+          incorrectTypeParamErrs.push('questionsCorrect must be an array');
+        }
+        break;
+      case 'questionsIncorrect':
+        if (!isValueCorrectType(paramValue, 'array')) {
+          incorrectTypeParamErrs.push('questionsIncorrect must be an array');
         }
         break;
       default:
@@ -168,6 +191,7 @@ function areStudentParamsCorrectTypes(student) {
 export {
   isExamIdValid,
   isQuestionIdValid,
+  isStudentIdValid,
   getExamFromDatabase,
   getQuestionFromDatabase,
   doesQuestionHaveRequiredParams,

@@ -1,15 +1,33 @@
 import Exam from '../../models/Exam';
-import { getExamFromDatabase, getQuestionFromDatabase } from './helper';
+import { getExamFromDatabase } from './helper';
 
 async function addExamToDatabase(req, res) {
   const { title, creator, questions, students } = req.body;
 
+  const examQuestions = questions.map((question) => {
+    const { name, type, options, answer } = question;
+    return {
+      name,
+      type,
+      options,
+      answer,
+    };
+  });
+  const studentQuestions = students.map((student) => {
+    const { name } = student;
+    return {
+      name,
+      takenTest: false,
+    };
+  });
+
   const examObject = {
     title,
     creator,
+    lastUpdated: Date.now(),
     numberOfQuestions: questions.length,
-    questions,
-    students,
+    questions: examQuestions,
+    students: studentQuestions,
   };
 
   const newExam = await new Exam(examObject).save().catch(() => {
@@ -32,7 +50,7 @@ async function editExamTitle(req, res) {
   const { title } = req.body;
   const updatedExam = await Exam.findByIdAndUpdate(
     examId,
-    { $set: { title } },
+    { $set: { title, lastUpdated: Date.now() } },
     { new: true, useFindAndModify: false },
   );
   res.status(200);
@@ -60,6 +78,7 @@ async function addQuestion(req, res) {
     {
       $push: { questions: question },
       $inc: { numberOfQuestions: 1 },
+      $set: { lastUpdated: Date.now() },
     },
     { useFindAndModify: false, new: true },
   );
@@ -75,8 +94,13 @@ async function editQuestion(req, res) {
     question[param] = req.body[param] ? req.body[param] : question[param];
   });
   await exam.save();
+  const updatedExam = await Exam.findByIdAndUpdate(
+    exam._id,
+    { $set: { lastUpdated: Date.now() } },
+    { useFindAndModify: false, new: true },
+  );
   res.status(200);
-  res.json({ message: 'question edited', updatedExam: exam });
+  res.json({ message: 'question edited', updatedExam });
 }
 
 async function deleteQuestion(req, res) {
@@ -86,11 +110,27 @@ async function deleteQuestion(req, res) {
   await exam.save();
   await Exam.findByIdAndUpdate(
     examId,
-    { $inc: { numberOfQuestions: -1 } },
+    { $inc: { numberOfQuestions: -1 }, $set: { lastUpdated: Date.now() } },
     { useFindAndModify: false, new: true },
   );
   res.status(200);
   res.json({ message: 'question deleted' });
+}
+
+async function addStudent(req, res) {
+  const { examId } = req.params;
+  const { name } = req.body;
+  const newStudent = {
+    name,
+    takenTest: false,
+  };
+  const updatedExam = await Exam.findByIdAndUpdate(
+    examId,
+    { $push: { students: newStudent } },
+    { useFindAndModify: false, new: true },
+  );
+  res.status(201);
+  res.json({ message: 'student added', updatedExam });
 }
 
 export {
@@ -101,4 +141,5 @@ export {
   addQuestion,
   editQuestion,
   deleteQuestion,
+  addStudent,
 };

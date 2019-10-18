@@ -1,5 +1,10 @@
-import { isValueCorrectType, createList } from '../../../common/helper';
 import {
+  isValueCorrectType,
+  createList,
+  doesRequestHaveRequiredParams,
+} from '../../../common/helper';
+import {
+  isStudentIdValid,
   doesStudentHaveRequiredParams,
   areStudentParamsCorrectTypes,
 } from '../helper';
@@ -17,6 +22,19 @@ function doesStudentsArrayHaveObjElements(req, res, next) {
   }
 }
 
+async function doesRequestContainValidStudentId(req, res, next) {
+  const { examId } = req.params;
+  const { studentId } = req.body;
+  const isIdValid = await isStudentIdValid(examId, studentId);
+  if (isIdValid) {
+    // next();
+    res.send('next');
+  } else {
+    res.status(400);
+    res.json({ error: 'invalid studentId' });
+  }
+}
+
 function doesStudentsArrayElementsHaveRequiredParams(req, res, next) {
   const { students } = req.body;
   const doesStudentsArrHaveRequiredParams = students.every((student) =>
@@ -27,9 +45,23 @@ function doesStudentsArrayElementsHaveRequiredParams(req, res, next) {
   } else {
     res.status(400);
     res.json({
-      error:
-        'each student element must have a name, studentId, and takenTest property',
+      error: 'each student element must have a name property',
     });
+  }
+}
+
+function doesAddStudentRequestHaveRequiredParams(req, res, next) {
+  const requiredParams = ['name'];
+  const {
+    doesReqHaveRequiredParams,
+    errorMessage,
+  } = doesRequestHaveRequiredParams(requiredParams, req.body);
+  if (doesReqHaveRequiredParams) {
+    next();
+  } else {
+    res.status(400);
+    const error = `${errorMessage}`;
+    res.json({ error });
   }
 }
 
@@ -59,23 +91,26 @@ function areStudentsArrayElementsParamsCorrectTypes(req, res, next) {
   }
 }
 
-function doesStudentArrayElementsHaveUniqueIds(req, res, next) {
-  const { students } = req.body;
-  const studentIdsArr = students.map((student) => student.studentId);
-  const studentIdsSet = new Set(studentIdsArr);
-  if (studentIdsSet.size === studentIdsArr.length) {
+function areAddStudentRequestParamsCorrectTypes(req, res, next) {
+  const {
+    doesStudentHaveCorrectTypes,
+    incorrectTypeParamErrsArr,
+  } = areStudentParamsCorrectTypes(req.body);
+  if (doesStudentHaveCorrectTypes) {
     next();
   } else {
     res.status(400);
     res.json({
-      error: 'studentIds must be unique',
+      error: `${createList(incorrectTypeParamErrsArr)}`,
     });
   }
 }
 
 export {
   doesStudentsArrayHaveObjElements,
+  doesRequestContainValidStudentId,
   doesStudentsArrayElementsHaveRequiredParams,
+  doesAddStudentRequestHaveRequiredParams,
   areStudentsArrayElementsParamsCorrectTypes,
-  doesStudentArrayElementsHaveUniqueIds,
+  areAddStudentRequestParamsCorrectTypes,
 };

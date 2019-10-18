@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import shortid from 'shortid';
 
 const { Schema, model } = mongoose;
 
@@ -19,11 +20,11 @@ const QuestionsSchema = new Schema({
 });
 
 const StudentsSchema = new Schema({
-  name: {
+  _id: {
     type: String,
-    required: true,
+    default: shortid.generate,
   },
-  studentId: {
+  name: {
     type: String,
     required: true,
   },
@@ -31,12 +32,20 @@ const StudentsSchema = new Schema({
     type: Boolean,
     required: true,
   },
-  results: String,
+  tookTest: Date,
+  questionsTaken: [String],
+  questionsCorrect: [String],
+  questionsIncorrect: [String],
+  score: String,
 });
 
 const ExamSchema = new Schema({
   creator: {
     type: String,
+    required: true,
+  },
+  lastUpdated: {
+    type: Date,
     required: true,
   },
   title: {

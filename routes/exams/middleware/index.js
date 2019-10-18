@@ -19,9 +19,11 @@ import {
 } from './questionsValidation';
 import {
   doesStudentsArrayHaveObjElements,
+  doesRequestContainValidStudentId,
   doesStudentsArrayElementsHaveRequiredParams,
+  doesAddStudentRequestHaveRequiredParams,
   areStudentsArrayElementsParamsCorrectTypes,
-  doesStudentArrayElementsHaveUniqueIds,
+  areAddStudentRequestParamsCorrectTypes,
 } from './studentsValidation';
 
 export {
@@ -41,7 +43,9 @@ export {
   doesAddQuestionRequestHaveCorrectParamsForType,
   doesEditQuestionRequestHaveCorrectParamsForType,
   doesStudentsArrayHaveObjElements,
+  doesRequestContainValidStudentId,
   doesStudentsArrayElementsHaveRequiredParams,
+  doesAddStudentRequestHaveRequiredParams,
   areStudentsArrayElementsParamsCorrectTypes,
-  doesStudentArrayElementsHaveUniqueIds,
+  areAddStudentRequestParamsCorrectTypes,
 };
