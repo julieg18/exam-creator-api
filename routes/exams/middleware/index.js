@@ -22,9 +22,12 @@ import {
   doesRequestContainValidStudentId,
   doesStudentsArrayElementsHaveRequiredParams,
   doesAddStudentRequestHaveRequiredParams,
+  doesSaveExamResultsRequestHaveRequiredParams,
   areStudentsArrayElementsParamsCorrectTypes,
   areAddStudentRequestParamsCorrectTypes,
   areEditStudentNameRequestParamsCorrectTypes,
+  areSaveExamResultsRequestParamsCorrectTypes,
+  doSaveExamResultsRequestArrayParamsHaveCorrectElements,
 } from './studentsValidation';
 
 export {
@@ -47,7 +50,10 @@ export {
   doesRequestContainValidStudentId,
   doesStudentsArrayElementsHaveRequiredParams,
   doesAddStudentRequestHaveRequiredParams,
+  doesSaveExamResultsRequestHaveRequiredParams,
   areStudentsArrayElementsParamsCorrectTypes,
   areAddStudentRequestParamsCorrectTypes,
   areEditStudentNameRequestParamsCorrectTypes,
+  areSaveExamResultsRequestParamsCorrectTypes,
+  doSaveExamResultsRequestArrayParamsHaveCorrectElements,
 };

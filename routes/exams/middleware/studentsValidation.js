@@ -7,6 +7,7 @@ import {
   isStudentIdValid,
   doesStudentHaveRequiredParams,
   areStudentParamsCorrectTypes,
+  getExamFromDatabase,
 } from '../helper';
 
 function doesStudentsArrayHaveObjElements(req, res, next) {
@@ -59,8 +60,25 @@ function doesAddStudentRequestHaveRequiredParams(req, res, next) {
     next();
   } else {
     res.status(400);
-    const error = `${errorMessage}`;
-    res.json({ error });
+    res.json({ error: errorMessage });
+  }
+}
+
+function doesSaveExamResultsRequestHaveRequiredParams(req, res, next) {
+  const requiredParams = [
+    'studentId',
+    'questionsCorrect',
+    'questionsIncorrect',
+  ];
+  const {
+    doesReqHaveRequiredParams,
+    errorMessage,
+  } = doesRequestHaveRequiredParams(requiredParams, req.body);
+  if (doesReqHaveRequiredParams) {
+    next();
+  } else {
+    res.status(200);
+    res.json({ error: errorMessage });
   }
 }
 
@@ -115,12 +133,62 @@ function areEditStudentNameRequestParamsCorrectTypes(req, res, next) {
   }
 }
 
+function areSaveExamResultsRequestParamsCorrectTypes(req, res, next) {
+  const { questionsIncorrect, questionsCorrect } = req.body;
+  const reqObj = {
+    questionsIncorrect,
+    questionsCorrect,
+  };
+  const {
+    doesStudentHaveCorrectTypes,
+    incorrectTypeParamErrsArr,
+  } = areStudentParamsCorrectTypes(reqObj);
+  if (doesStudentHaveCorrectTypes) {
+    next();
+  } else {
+    res.status(400);
+    res.json({ error: createList(incorrectTypeParamErrsArr) });
+  }
+}
+
+async function doSaveExamResultsRequestArrayParamsHaveCorrectElements(
+  req,
+  res,
+  next,
+) {
+  const errorMessages = [];
+  const { questionsIncorrect, questionsCorrect } = req.body;
+  const exam = await getExamFromDatabase(req.params.examId);
+  const sortedExamQuestionIds = exam.questions
+    .map((question) => question._id)
+    .sort();
+  const sortedRequestQuestionIds = [
+    ...questionsIncorrect,
+    ...questionsCorrect,
+  ].sort();
+
+  if (sortedRequestQuestionIds.join('') !== sortedExamQuestionIds.join('')) {
+    errorMessages.push(
+      'questionsIncorrect must contain the questionIds of the questions that the student got incorrect and questionsCorrect must contain the questionIds of the questions that the student got correct',
+    );
+  }
+  if (errorMessages.length === 0) {
+    next();
+  } else {
+    res.status(400);
+    res.json({ error: errorMessages });
+  }
+}
+
 export {
   doesStudentsArrayHaveObjElements,
   doesRequestContainValidStudentId,
   doesStudentsArrayElementsHaveRequiredParams,
   doesAddStudentRequestHaveRequiredParams,
+  doesSaveExamResultsRequestHaveRequiredParams,
   areStudentsArrayElementsParamsCorrectTypes,
   areAddStudentRequestParamsCorrectTypes,
   areEditStudentNameRequestParamsCorrectTypes,
+  areSaveExamResultsRequestParamsCorrectTypes,
+  doSaveExamResultsRequestArrayParamsHaveCorrectElements,
 };
