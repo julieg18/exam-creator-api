@@ -150,6 +150,19 @@ async function deleteStudent(req, res) {
   res.json({ message: 'student deleted', updatedExam: exam });
 }
 
+async function saveExamResults(req, res) {
+  const { studentId, questionsCorrect, questionsIncorrect } = req.body;
+  const exam = await getExamFromDatabase(req.params.examId);
+  const student = exam.students.id(studentId);
+  student.questionsCorrect = questionsCorrect;
+  student.questionsIncorrect = questionsIncorrect;
+  student.questionsTaken = [...questionsIncorrect, ...questionsCorrect];
+  student.takenTest = true;
+  await exam.save();
+  res.status(200);
+  res.json({ message: 'exam results saved', updatedExam: exam });
+}
+
 export {
   addExamToDatabase,
   getExam,
@@ -161,4 +174,5 @@ export {
   addStudent,
   editStudentName,
   deleteStudent,
+  saveExamResults,
 };
