@@ -139,7 +139,15 @@ async function editStudentName(req, res) {
   student.name = req.body.name ? req.body.name : student.name;
   await exam.save();
   res.status(200);
-  res.json({ message: 'student name edited', exam });
+  res.json({ message: 'student name edited', updatedExam: exam });
+}
+
+async function deleteStudent(req, res) {
+  const exam = await getExamFromDatabase(req.params.examId);
+  exam.students.id(req.body.studentId).remove();
+  await exam.save();
+  res.status(200);
+  res.json({ message: 'student deleted', updatedExam: exam });
 }
 
 export {
@@ -152,4 +160,5 @@ export {
   deleteQuestion,
   addStudent,
   editStudentName,
+  deleteStudent,
 };
