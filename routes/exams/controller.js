@@ -133,6 +133,15 @@ async function addStudent(req, res) {
   res.json({ message: 'student added', updatedExam });
 }
 
+async function editStudentName(req, res) {
+  const exam = await getExamFromDatabase(req.params.examId);
+  const student = exam.students.id(req.body.studentId);
+  student.name = req.body.name ? req.body.name : student.name;
+  await exam.save();
+  res.status(200);
+  res.json({ message: 'student name edited', exam });
+}
+
 export {
   addExamToDatabase,
   getExam,
@@ -142,4 +151,5 @@ export {
   editQuestion,
   deleteQuestion,
   addStudent,
+  editStudentName,
 };

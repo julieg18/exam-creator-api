@@ -24,6 +24,7 @@ import {
   doesAddStudentRequestHaveRequiredParams,
   areStudentsArrayElementsParamsCorrectTypes,
   areAddStudentRequestParamsCorrectTypes,
+  areEditStudentNameRequestParamsCorrectTypes,
 } from './studentsValidation';
 
 export {
@@ -48,4 +49,5 @@ export {
   doesAddStudentRequestHaveRequiredParams,
   areStudentsArrayElementsParamsCorrectTypes,
   areAddStudentRequestParamsCorrectTypes,
+  areEditStudentNameRequestParamsCorrectTypes,
 };

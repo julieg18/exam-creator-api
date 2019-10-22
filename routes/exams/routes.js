@@ -22,6 +22,7 @@ import {
   doesAddStudentRequestHaveRequiredParams,
   areStudentsArrayElementsParamsCorrectTypes,
   areAddStudentRequestParamsCorrectTypes,
+  areEditStudentNameRequestParamsCorrectTypes,
 } from './middleware/index';
 import {
   addExamToDatabase,
@@ -32,6 +33,7 @@ import {
   editQuestion,
   deleteQuestion,
   addStudent,
+  editStudentName,
 } from './controller';
 
 const examRoutes = express.Router();
@@ -89,10 +91,21 @@ examRoutes
     areAddStudentRequestParamsCorrectTypes,
     addStudent,
   )
-  .put(checkIfExamIdIsValid, doesRequestContainValidStudentId)
-  .delete(checkIfExamIdIsValid);
+  .put(
+    checkIfExamIdIsValid,
+    doesRequestContainValidStudentId,
+    areEditStudentNameRequestParamsCorrectTypes,
+    editStudentName,
+  )
+  .delete((req, res) => {
+    res.send('this route should delete a student');
+  });
 
-examRoutes.route('/students/completedExam/examId').put();
+examRoutes.route('/students/completedExam/examId').put((req, res) => {
+  res.send(
+    "this route should edit a student's profile when they complete a exam",
+  );
+});
 
 examRoutes.route('/user/:userId').get((req, res) => {
   res.send("this route should get a user's exam");

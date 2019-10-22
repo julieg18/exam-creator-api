@@ -27,8 +27,7 @@ async function doesRequestContainValidStudentId(req, res, next) {
   const { studentId } = req.body;
   const isIdValid = await isStudentIdValid(examId, studentId);
   if (isIdValid) {
-    // next();
-    res.send('next');
+    next();
   } else {
     res.status(400);
     res.json({ error: 'invalid studentId' });
@@ -106,6 +105,16 @@ function areAddStudentRequestParamsCorrectTypes(req, res, next) {
   }
 }
 
+function areEditStudentNameRequestParamsCorrectTypes(req, res, next) {
+  const { name } = req.body;
+  if (isValueCorrectType(name, 'string')) {
+    next();
+  } else {
+    res.status(400);
+    res.json({ error: 'name must be a string' });
+  }
+}
+
 export {
   doesStudentsArrayHaveObjElements,
   doesRequestContainValidStudentId,
@@ -113,4 +122,5 @@ export {
   doesAddStudentRequestHaveRequiredParams,
   areStudentsArrayElementsParamsCorrectTypes,
   areAddStudentRequestParamsCorrectTypes,
+  areEditStudentNameRequestParamsCorrectTypes,
 };
