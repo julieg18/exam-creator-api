@@ -34,6 +34,7 @@ import {
   deleteQuestion,
   addStudent,
   editStudentName,
+  deleteStudent,
 } from './controller';
 
 const examRoutes = express.Router();
@@ -97,9 +98,11 @@ examRoutes
     areEditStudentNameRequestParamsCorrectTypes,
     editStudentName,
   )
-  .delete((req, res) => {
-    res.send('this route should delete a student');
-  });
+  .delete(
+    checkIfExamIdIsValid,
+    doesRequestContainValidStudentId,
+    deleteStudent,
+  );
 
 examRoutes.route('/students/completedExam/examId').put((req, res) => {
   res.send(
