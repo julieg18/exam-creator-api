@@ -1,6 +1,5 @@
-import chai from 'chai';
+import chai, { assert } from 'chai';
 import chaiHttp from 'chai-http';
-import { assert } from 'chai';
 import clonedeep from 'lodash.clonedeep';
 import app from '../server';
 
@@ -237,6 +236,18 @@ describe('/api/v1/exams/{examId}', () => {
           done();
         });
     });
+
+    it('should throw an error if title is not a string', (done) => {
+      chai
+        .request(app)
+        .put(`/api/v1/exams/${examId}`)
+        .send({ title: { updatedTitle: 'Basic Math Test' } })
+        .end((err, res) => {
+          res.should.have.status(400);
+          assert.equal(res.body.error, 'title must be a string');
+          done();
+        });
+    });
   });
 
   describe('DELETE', () => {
@@ -250,5 +261,16 @@ describe('/api/v1/exams/{examId}', () => {
           done();
         });
     });
+  });
+
+  it('should throw an error if examId is invalid', (done) => {
+    chai
+      .request(app)
+      .put('/api/v1/exams/invalid-id')
+      .end((err, res) => {
+        res.should.have.status(400);
+        assert.equal(res.body.error, 'invalid examId');
+        done();
+      });
   });
 });
