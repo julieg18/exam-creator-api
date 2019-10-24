@@ -91,7 +91,7 @@ function doesSaveExamResultsRequestHaveRequiredParams(req, res, next) {
   if (doesReqHaveRequiredParams) {
     next();
   } else {
-    res.status(200);
+    res.status(400);
     res.json({ error: errorMessage });
   }
 }
