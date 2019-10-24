@@ -64,6 +64,20 @@ function doesAddStudentRequestHaveRequiredParams(req, res, next) {
   }
 }
 
+function doesEditStudentRequestHaveRequiredParams(req, res, next) {
+  const requiredParams = ['studentId', 'name'];
+  const {
+    doesReqHaveRequiredParams,
+    errorMessage,
+  } = doesRequestHaveRequiredParams(requiredParams, req.body);
+  if (doesReqHaveRequiredParams) {
+    next();
+  } else {
+    res.status(400);
+    res.json({ error: errorMessage });
+  }
+}
+
 function doesSaveExamResultsRequestHaveRequiredParams(req, res, next) {
   const requiredParams = [
     'studentId',
@@ -185,6 +199,7 @@ export {
   doesRequestContainValidStudentId,
   doesStudentsArrayElementsHaveRequiredParams,
   doesAddStudentRequestHaveRequiredParams,
+  doesEditStudentRequestHaveRequiredParams,
   doesSaveExamResultsRequestHaveRequiredParams,
   areStudentsArrayElementsParamsCorrectTypes,
   areAddStudentRequestParamsCorrectTypes,
