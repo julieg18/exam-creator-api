@@ -190,7 +190,7 @@ async function doSaveExamResultsRequestArrayParamsHaveCorrectElements(
     next();
   } else {
     res.status(400);
-    res.json({ error: errorMessages });
+    res.json({ error: createList(errorMessages) });
   }
 }
 
