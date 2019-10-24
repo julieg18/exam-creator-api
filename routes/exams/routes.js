@@ -20,6 +20,7 @@ import {
   doesRequestContainValidStudentId,
   doesStudentsArrayElementsHaveRequiredParams,
   doesAddStudentRequestHaveRequiredParams,
+  doesEditStudentRequestHaveRequiredParams,
   doesSaveExamResultsRequestHaveRequiredParams,
   areStudentsArrayElementsParamsCorrectTypes,
   areAddStudentRequestParamsCorrectTypes,
@@ -99,6 +100,7 @@ examRoutes
   .put(
     checkIfExamIdIsValid,
     doesRequestContainValidStudentId,
+    doesEditStudentRequestHaveRequiredParams,
     areEditStudentNameRequestParamsCorrectTypes,
     editStudentName,
   )
