@@ -138,6 +138,7 @@ describe('/api/v1/exams/students/:examId', () => {
         });
     });
   });
+
   describe('DELETE', () => {
     it('should delete student successfully', (done) => {
       const requestObject = { studentId };
@@ -187,7 +188,7 @@ describe('/api/v1/exams/students/:examId', () => {
   });
 });
 
-describe.only('api/v1/exams/students/save-exam-results/:examId', () => {
+describe('api/v1/exams/students/save-exam-results/:examId', () => {
   before((done) => {
     chai
       .request(app)
