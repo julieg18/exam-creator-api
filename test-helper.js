@@ -33,6 +33,13 @@ const examObj = {
   ],
 };
 
+const questionObj = {
+  name: 'What is 5-2?',
+  type: 'radio',
+  options: ['4', '1', '3'],
+  answer: '3',
+};
+
 const studentObj = {
   name: 'Susan',
 };
@@ -96,6 +103,7 @@ function checkExamStudents(students) {
 
 export {
   examObj,
+  questionObj,
   studentObj,
   checkExam,
   checkExamQuestions,
