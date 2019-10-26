@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "nodemon --exec babel-node server.js",
-    "test": "mocha --require @babel/register --require @babel/polyfill --exit"
+    "test": "mocha --require @babel/register --require @babel/polyfill --timeout 5000 --exit"
   },
   "author": "Julie Galvan",
   "license": "ISC",
