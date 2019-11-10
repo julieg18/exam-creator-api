@@ -1,26 +1,25 @@
 import express from 'express';
+import {
+  signUpUser,
+  getUser,
+  deleteUser,
+  logoutUser,
+  loginUser,
+  getUserExams,
+} from './controller';
 
 const userRoutes = express.Router();
 
-userRoutes
-  .route('/:userId')
-  .get((req, res) => {
-    res.send('this route should be used to get a user profile');
-  })
-  .delete((req, res) => {
-    res.send('this route should be used to delete a user');
-  });
+userRoutes.route('/').get(getUser);
 
-userRoutes.route('/signup').post((req, res) => {
-  res.send('this route should be used to signup a user');
-});
+userRoutes.route('/:userId').delete(deleteUser);
 
-userRoutes.route('/login').post((req, res) => {
-  res.send('this route should be used to login a user');
-});
+userRoutes.route('/signup').post(signUpUser);
 
-userRoutes.route('/logout').post((req, res) => {
-  res.send('this route should be used to logout a user');
-});
+userRoutes.route('/login').post(loginUser);
+
+userRoutes.route('/logout').post(logoutUser);
+
+userRoutes.route('/exams/:userId').get(getUserExams);
 
 export default userRoutes;
