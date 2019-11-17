@@ -1,26 +1,60 @@
 import express from 'express';
+import {
+  signUpUser,
+  getUser,
+  deleteUser,
+  logoutUser,
+  loginUser,
+  getUserExams,
+} from './controller';
+import {
+  isUserAlreadyLoggedIn,
+  doesSignupRequestHaveRequiredParams,
+  areSignupRequestParamsCorrectType,
+  areSignupRequestParamsEmpty,
+  doesEmailAlreadyExist,
+  isUsernameValid,
+  isEmailValid,
+  isPasswordValid,
+  doesLoginRequestHaveRequiredParams,
+  isEmailInDatabase,
+  doesPasswordMatchAccount,
+} from './middleware';
+import { isUserLoggedIn } from '../../common/middleware';
 
 const userRoutes = express.Router();
 
 userRoutes
-  .route('/:userId')
-  .get((req, res) => {
-    res.send('this route should be used to get a user profile');
-  })
-  .delete((req, res) => {
-    res.send('this route should be used to delete a user');
-  });
+  .route('/')
+  .get(isUserLoggedIn, getUser)
+  .delete(isUserLoggedIn, deleteUser);
 
-userRoutes.route('/signup').post((req, res) => {
-  res.send('this route should be used to signup a user');
-});
+userRoutes
+  .route('/signup')
+  .post(
+    isUserAlreadyLoggedIn,
+    doesSignupRequestHaveRequiredParams,
+    areSignupRequestParamsCorrectType,
+    areSignupRequestParamsEmpty,
+    doesEmailAlreadyExist,
+    isUsernameValid,
+    isEmailValid,
+    isPasswordValid,
+    signUpUser,
+  );
 
-userRoutes.route('/login').post((req, res) => {
-  res.send('this route should be used to login a user');
-});
+userRoutes
+  .route('/login')
+  .post(
+    isUserAlreadyLoggedIn,
+    doesLoginRequestHaveRequiredParams,
+    isEmailInDatabase,
+    doesPasswordMatchAccount,
+    loginUser,
+  );
 
-userRoutes.route('/logout').post((req, res) => {
-  res.send('this route should be used to logout a user');
-});
+userRoutes.route('/logout').post(isUserLoggedIn, logoutUser);
+
+userRoutes.route('/exams').get(isUserLoggedIn, getUserExams);
 
 export default userRoutes;

@@ -44,6 +44,23 @@ const studentObj = {
   name: 'Susan',
 };
 
+const userSignupObj = {
+  username: 'Nathan',
+  email: 'nathan@icloud.com',
+  password: 'nathaniscool',
+};
+
+const secondUserSignupObj = {
+  username: 'James',
+  email: 'james@gmail.com',
+  password: 'jamesisanicename',
+};
+
+const userLoginObj = {
+  email: 'nathan@icloud.com',
+  password: 'nathaniscool',
+};
+
 function checkExam(exam) {
   assert.hasAllKeys(exam, [
     '_id',
@@ -101,11 +118,23 @@ function checkExamStudents(students) {
   });
 }
 
+function checkUser(user, signupObj) {
+  assert.isObject(user);
+  assert.containsAllKeys(user, ['_id', 'username', 'password', 'email']);
+  assert.propertyVal(user, 'username', signupObj.username);
+  assert.propertyVal(user, 'email', signupObj.email);
+  assert.notPropertyVal(user, 'password', signupObj.password);
+}
+
 export {
   examObj,
   questionObj,
   studentObj,
+  userSignupObj,
+  secondUserSignupObj,
+  userLoginObj,
   checkExam,
   checkExamQuestions,
   checkExamStudents,
+  checkUser,
 };

@@ -121,8 +121,4 @@ examRoutes
     saveExamResults,
   );
 
-examRoutes.route('/user/:userId').get((req, res) => {
-  res.send("this route should get a user's exam");
-});
-
 export default examRoutes;
