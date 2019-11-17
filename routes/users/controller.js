@@ -31,11 +31,18 @@ function getUser(req, res) {
 }
 
 async function deleteUser(req, res) {
-  const { userId } = req.params;
+  const { session } = req;
+  const {
+    user: { userId },
+  } = session;
   try {
     await User.findByIdAndRemove(userId, { useFindAndModify: false });
-    res.status(200);
-    res.json({ message: 'user deleted', userId });
+    await Exam.deleteMany({ creator: userId });
+    session.destroy(() => {
+      res.clearCookie(SESS_NAME);
+      res.status(200);
+      res.json({ message: 'user deleted', userId });
+    });
   } catch (err) {
     res.status(501);
     res.json({ error: 'could not delete user' });
@@ -62,7 +69,7 @@ async function loginUser(req, res) {
   try {
     const user = await User.findOne({ email });
     req.session.user = { userId: user._id };
-    res.status(201);
+    res.status(200);
     res.json({ message: 'user logged in', user });
   } catch (err) {
     res.status(501);
@@ -71,13 +78,16 @@ async function loginUser(req, res) {
 }
 
 async function getUserExams(req, res) {
-  const { userId } = req.params;
+  const {
+    session: {
+      user: { userId },
+    },
+  } = req;
   try {
     const exams = await Exam.find({ creator: userId });
     res.status(200);
     res.json({ message: 'exams found', exams });
   } catch (err) {
-    console.log(err);
     res.status(501);
     res.json({ error: 'could not get exams' });
   }

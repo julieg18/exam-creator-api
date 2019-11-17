@@ -5,10 +5,6 @@ const UserSchema = new mongoose.Schema(
     username: {
       type: String,
       required: true,
-      validate: {
-        validator: (username) => User.doesNotExist({ username }),
-        message: 'Username already exists',
-      },
     },
     email: {
       type: String,
