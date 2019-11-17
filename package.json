@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "nodemon --exec babel-node server.js",
-    "test": "mocha --require @babel/register --require @babel/polyfill --timeout 5000 --exit"
+    "test": "mocha --require @babel/register --require @babel/polyfill --timeout 100000 --bail --exit"
   },
   "author": "Julie Galvan",
   "license": "ISC",
@@ -32,6 +32,8 @@
     "@babel/register": "^7.6.2",
     "chai": "^4.2.0",
     "chai-http": "^4.3.0",
-    "mocha": "^6.2.2"
+    "mocha": "^6.2.2",
+    "superagent": "^5.1.0",
+    "supertest": "^4.0.2"
   }
 }
