@@ -16,6 +16,50 @@ const apiAddress = 'http://localhost:8080/api/v1';
 chai.should();
 
 describe('/api/v1/users', () => {
+  describe('GET /', () => {
+    before(async () => {
+      const signupRes = await server
+        .post(`${apiAddress}/users/signup`)
+        .send(userSignupObj);
+      signupRes.should.have.status(201);
+    });
+
+    it('should get a information about a user', async () => {
+      const getUserRes = await server.get(`${apiAddress}/users`);
+      const {
+        body: { message, user },
+      } = getUserRes;
+      getUserRes.should.have.status(200);
+      assert.equal(message, 'user found');
+      checkUser(user, userSignupObj);
+      assert.containsAllKeys(user, ['createdAt', 'updatedAt']);
+    });
+
+    it('should throw an error if user is not logged in', async () => {
+      const logoutRes = await server.post(`${apiAddress}/users/logout`);
+      logoutRes.should.have.status(200);
+
+      await server.get(`${apiAddress}/users`).catch((err) => {
+        const { response } = err;
+        const {
+          body: { error },
+        } = response;
+        response.should.have.status(401);
+        assert.equal(error, 'user is not logged in');
+      });
+    });
+
+    after(async () => {
+      const loginRes = await server
+        .post(`${apiAddress}/users/login`)
+        .send(userLoginObj);
+      loginRes.should.have.status(200);
+
+      const deleteRes = await server.delete(`${apiAddress}/users`);
+      deleteRes.should.have.status(200);
+    });
+  });
+
   describe('DELETE /', () => {
     before(async () => {
       const signupRes = await server
