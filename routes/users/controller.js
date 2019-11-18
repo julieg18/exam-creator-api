@@ -23,11 +23,14 @@ async function signUpUser(req, res) {
   }
 }
 
-function getUser(req, res) {
+async function getUser(req, res) {
   const {
-    session: { user },
+    session: {
+      user: { userId },
+    },
   } = req;
-  res.json({ user });
+  const user = await User.findById(userId);
+  res.json({ message: 'user found', user });
 }
 
 async function deleteUser(req, res) {
