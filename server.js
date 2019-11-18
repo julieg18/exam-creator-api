@@ -6,6 +6,8 @@ import bodyParser from 'body-parser';
 import helmet from 'helmet';
 import connectStore from 'connect-mongo';
 import examRoutes from './routes/exams/routes';
+import questionRoutes from './routes/exams/questions/routes';
+import studentRoutes from './routes/exams/students/routes';
 import userRoutes from './routes/users/routes';
 
 dotenv.config();
@@ -57,6 +59,8 @@ app.use(
 );
 
 app.use('/api/v1/exams', examRoutes);
+app.use('/api/v1/exams/questions', questionRoutes);
+app.use('/api/v1/exams/students', studentRoutes);
 app.use('/api/v1/users', userRoutes);
 
 const port = PORT || 8080;
