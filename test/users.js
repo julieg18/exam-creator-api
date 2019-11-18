@@ -7,6 +7,9 @@ import {
   secondUserSignupObj,
   userLoginObj,
   checkUser,
+  checkExam,
+  checkExamQuestions,
+  checkExamStudents,
 } from '../test-helper';
 
 const { SESS_NAME } = process.env;
@@ -89,7 +92,12 @@ describe('/api/v1/users', () => {
 
     it('should delete a user', async () => {
       const deleteRes = await server.delete(`${apiAddress}/users`);
+      const {
+        body: { message, userId },
+      } = deleteRes;
       deleteRes.should.have.status(200);
+      assert.equal(message, 'user deleted');
+      assert.isString(userId);
     });
   });
 
@@ -274,6 +282,7 @@ describe('/api/v1/users', () => {
       assert.equal(message, 'user logged in');
       checkUser(user, userSignupObj);
       loginRes.should.have.cookie(SESS_NAME);
+
       const logoutRes = await server.post(`${apiAddress}/users/logout`);
       logoutRes.should.have.status(200);
     });
@@ -350,7 +359,13 @@ describe('/api/v1/users', () => {
 
     it('should logout a user', async () => {
       const logoutRes = await server.post(`${apiAddress}/users/logout`);
+      const {
+        body: { message, userId },
+      } = logoutRes;
       logoutRes.should.have.status(200);
+      assert.equal(message, 'user logged out');
+      assert.isString(userId);
+      logoutRes.should.not.have.cookie(SESS_NAME);
     });
 
     it('should throw an error if user is not logged in', async () => {
@@ -389,7 +404,16 @@ describe('/api/v1/users', () => {
 
     it('should retrieve the users exams', async () => {
       const getExamsRes = await server.get(`${apiAddress}/users/exams`);
+      const {
+        body: { message, exams },
+      } = getExamsRes;
       getExamsRes.should.have.status(200);
+      assert.equal(message, 'exams found');
+      assert.isArray(exams);
+      assert.isObject(exams[0]);
+      checkExam(exams[0]);
+      checkExamQuestions(exams[0].questions);
+      checkExamStudents(exams[0].students);
     });
 
     it('should throw an error if a user is not logged in', async () => {

@@ -54,7 +54,9 @@ async function deleteUser(req, res) {
 
 function logoutUser(req, res) {
   const { session } = req;
-  const { user } = session;
+  const {
+    user: { userId },
+  } = session;
   session.destroy((err) => {
     if (err) {
       res.status(500);
@@ -62,7 +64,7 @@ function logoutUser(req, res) {
     } else {
       res.clearCookie(SESS_NAME);
       res.status(200);
-      res.json({ message: 'user logged out', user });
+      res.json({ message: 'user logged out', userId });
     }
   });
 }
