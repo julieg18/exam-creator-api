@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import session from 'express-session';
 import bodyParser from 'body-parser';
+import helmet from 'helmet';
 import connectStore from 'connect-mongo';
 import examRoutes from './routes/exams/routes';
 import userRoutes from './routes/users/routes';
@@ -19,6 +20,8 @@ const {
 } = process.env;
 
 const app = express();
+
+app.use(helmet());
 
 const uri = DB;
 mongoose
