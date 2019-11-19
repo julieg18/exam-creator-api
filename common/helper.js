@@ -66,9 +66,23 @@ function doesRequestHaveRequiredParams(requiredParams, request) {
   };
 }
 
+function areRequestParamsEmpty(params, request) {
+  const emptyParams = [];
+  params.forEach((param) => {
+    if (request[param].length === 0) {
+      emptyParams.push(param);
+    }
+  });
+  return {
+    areReqParamsEmpty: emptyParams.length !== 0,
+    errorMessage: `${createList(emptyParams)} must not be empty`,
+  };
+}
+
 export {
   isValueCorrectType,
   doesObjectHaveRequiredProperties,
   createList,
   doesRequestHaveRequiredParams,
+  areRequestParamsEmpty,
 };

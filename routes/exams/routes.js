@@ -1,39 +1,23 @@
 import express from 'express';
-
 import {
   checkIfExamIdIsValid,
   doesCreateExamRequestHaveRequiredParams,
   doesEditExamRequestHaveRequiredParams,
   areCreateExamRequestParamsCorrectTypes,
   isEditExamRequestParamCorrectType,
-  checkIfQuestionIdIsValid,
   doesQuestionsArrayHaveObjElements,
-  doesQuestionsArrayElementsHaveRequiredParams,
-  doesAddQuestionRequestHaveRequiredParams,
-  doesEditQuestionRequestHaveRequiredParams,
-  areQuestionsArrayElementsParamsCorrectTypes,
-  areQuestionRequestParamsCorrectTypes,
-  doesQuestionsArrayElementsHaveCorrectParamsForType,
-  doesAddQuestionRequestHaveCorrectParamsForType,
-  doesEditQuestionRequestHaveCorrectParamsForType,
   doesStudentsArrayHaveObjElements,
-  doesRequestContainValidStudentId,
+  doesQuestionsArrayElementsHaveRequiredParams,
   doesStudentsArrayElementsHaveRequiredParams,
-  doesAddStudentRequestHaveRequiredParams,
+  areQuestionsArrayElementsParamsCorrectTypes,
   areStudentsArrayElementsParamsCorrectTypes,
-  areAddStudentRequestParamsCorrectTypes,
-  areEditStudentNameRequestParamsCorrectTypes,
-} from './middleware/index';
+  doesQuestionsArrayElementsHaveCorrectParamsForType,
+} from './middleware';
 import {
   addExamToDatabase,
   getExam,
   editExamTitle,
   deleteExamFromDatabase,
-  addQuestion,
-  editQuestion,
-  deleteQuestion,
-  addStudent,
-  editStudentName,
 } from './controller';
 
 const examRoutes = express.Router();
@@ -63,52 +47,5 @@ examRoutes
     editExamTitle,
   )
   .delete(checkIfExamIdIsValid, deleteExamFromDatabase);
-
-examRoutes
-  .route('/questions/:examId')
-  .post(
-    checkIfExamIdIsValid,
-    doesAddQuestionRequestHaveRequiredParams,
-    areQuestionRequestParamsCorrectTypes,
-    doesAddQuestionRequestHaveCorrectParamsForType,
-    addQuestion,
-  )
-  .put(
-    checkIfExamIdIsValid,
-    checkIfQuestionIdIsValid,
-    doesEditQuestionRequestHaveRequiredParams,
-    areQuestionRequestParamsCorrectTypes,
-    doesEditQuestionRequestHaveCorrectParamsForType,
-    editQuestion,
-  )
-  .delete(checkIfExamIdIsValid, checkIfQuestionIdIsValid, deleteQuestion);
-
-examRoutes
-  .route('/students/:examId')
-  .post(
-    checkIfExamIdIsValid,
-    doesAddStudentRequestHaveRequiredParams,
-    areAddStudentRequestParamsCorrectTypes,
-    addStudent,
-  )
-  .put(
-    checkIfExamIdIsValid,
-    doesRequestContainValidStudentId,
-    areEditStudentNameRequestParamsCorrectTypes,
-    editStudentName,
-  )
-  .delete((req, res) => {
-    res.send('this route should delete a student');
-  });
-
-examRoutes.route('/students/completedExam/examId').put((req, res) => {
-  res.send(
-    "this route should edit a student's profile when they complete a exam",
-  );
-});
-
-examRoutes.route('/user/:userId').get((req, res) => {
-  res.send("this route should get a user's exam");
-});
 
 export default examRoutes;
