@@ -1,5 +1,5 @@
-import bcrypt from 'bcrypt';
-import { isUserIdValid, doesEmailExist } from './helper';
+import bcrypt from 'bcryptjs';
+import { doesEmailExist } from './helper';
 import {
   isValueCorrectType,
   createList,

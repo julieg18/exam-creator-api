@@ -4,13 +4,14 @@
   "description": "A website for creating online exams.",
   "main": "server.js",
   "scripts": {
-    "start": "nodemon --exec babel-node server.js",
+    "start": "node dist/main.js",
+    "build": "webpack",
+    "dev": "nodemon --exec babel-node server.js",
     "test": "mocha --require @babel/register --require @babel/polyfill --timeout 100000 --bail --exit"
   },
   "author": "Julie Galvan",
   "license": "ISC",
   "dependencies": {
-    "bcrypt": "^3.0.6",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
     "connect-mongo": "^3.1.2",
@@ -34,7 +35,10 @@
     "chai": "^4.2.0",
     "chai-http": "^4.3.0",
     "mocha": "^6.2.2",
+    "nodemon": "^2.0.1",
     "superagent": "^5.1.0",
-    "supertest": "^4.0.2"
+    "webpack": "^4.41.2",
+    "webpack-cli": "^3.3.10",
+    "webpack-node-externals": "^1.7.2"
   }
 }
