@@ -4,9 +4,9 @@
   "description": "A website for creating online exams.",
   "main": "server.js",
   "scripts": {
-    "start": "nodemon --exec babel-node server.js",
+    "start": "node dist/main.js",
     "build": "webpack",
-    "dev": "webpack-dev-server",
+    "dev": "nodemon --exec babel-node server.js",
     "test": "mocha --require @babel/register --require @babel/polyfill --timeout 100000 --bail --exit"
   },
   "author": "Julie Galvan",
