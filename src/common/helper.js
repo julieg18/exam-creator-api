@@ -79,10 +79,18 @@ function areRequestParamsEmpty(params, request) {
   };
 }
 
+function createSentence(phrase) {
+  const messageArr = phrase.split('');
+  messageArr[0] = messageArr[0].toUpperCase();
+  messageArr.push('.');
+  return messageArr.join('');
+}
+
 export {
   isValueCorrectType,
   doesObjectHaveRequiredProperties,
   createList,
   doesRequestHaveRequiredParams,
   areRequestParamsEmpty,
+  createSentence,
 };
