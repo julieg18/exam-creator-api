@@ -5,6 +5,7 @@ import {
   createList,
   doesRequestHaveRequiredParams,
   areRequestParamsEmpty,
+  createSentence,
 } from '../../common/helper';
 import User from '../../models/User';
 
@@ -16,7 +17,7 @@ function isUserAlreadyLoggedIn(req, res, next) {
     next();
   } else {
     res.status(400);
-    res.json({ error: 'a user is already logged in' });
+    res.json({ error: 'A user is already logged in.' });
   }
 }
 
@@ -31,7 +32,7 @@ function doesSignupRequestHaveRequiredParams(req, res, next) {
   } else {
     res.status(400);
     res.json({
-      error: errorMessage,
+      error: createSentence(errorMessage),
     });
   }
 }
@@ -49,7 +50,7 @@ function areSignupRequestParamsCorrectType(req, res, next) {
     next();
   } else {
     res.status(400);
-    res.json({ error: createList(errors) });
+    res.json({ error: createSentence(createList(errors)) });
   }
 }
 
@@ -63,7 +64,21 @@ function areSignupRequestParamsEmpty(req, res, next) {
     next();
   } else {
     res.status(400);
-    res.json({ error: errorMessage });
+    res.json({ error: createSentence(errorMessage) });
+  }
+}
+
+function areLoginRequestParamsEmpty(req, res, next) {
+  const params = ['email', 'password'];
+  const { areReqParamsEmpty, errorMessage } = areRequestParamsEmpty(
+    params,
+    req.body,
+  );
+  if (!areReqParamsEmpty) {
+    next();
+  } else {
+    res.status(400);
+    res.json({ error: createSentence(errorMessage) });
   }
 }
 
@@ -74,7 +89,7 @@ async function doesEmailAlreadyExist(req, res, next) {
     next();
   } else {
     res.status(400);
-    res.json({ error: 'email already exists' });
+    res.json({ error: 'Email already exists.' });
   }
 }
 
@@ -92,7 +107,7 @@ function isUsernameValid(req, res, next) {
     next();
   } else {
     res.status(400);
-    res.json({ error: `username ${createList(errors)}` });
+    res.json({ error: `Username ${createList(errors)}.` });
   }
 }
 
@@ -104,7 +119,7 @@ function isEmailValid(req, res, next) {
     next();
   } else {
     res.status(400);
-    res.json({ error: 'invalid email' });
+    res.json({ error: 'Email is invalid.' });
   }
 }
 
@@ -126,7 +141,7 @@ function isPasswordValid(req, res, next) {
     next();
   } else {
     res.status(400);
-    res.json({ error: `password ${createList(errors)}` });
+    res.json({ error: `Password ${createList(errors)}.` });
   }
 }
 
@@ -141,7 +156,7 @@ function doesLoginRequestHaveRequiredParams(req, res, next) {
   } else {
     res.status(400);
     res.json({
-      error: errorMessage,
+      error: createSentence(errorMessage),
     });
   }
 }
@@ -153,7 +168,7 @@ async function isEmailInDatabase(req, res, next) {
     next();
   } else {
     res.status(400);
-    res.json({ error: 'email not found in database' });
+    res.json({ error: 'Email is incorrect.' });
   }
 }
 
@@ -165,7 +180,7 @@ async function doesPasswordMatchAccount(req, res, next) {
     next();
   } else {
     res.status(400);
-    res.json({ error: 'password is incorrect' });
+    res.json({ error: 'Password is incorrect.' });
   }
 }
 
@@ -174,6 +189,7 @@ export {
   doesSignupRequestHaveRequiredParams,
   areSignupRequestParamsCorrectType,
   areSignupRequestParamsEmpty,
+  areLoginRequestParamsEmpty,
   doesEmailAlreadyExist,
   isUsernameValid,
   isEmailValid,

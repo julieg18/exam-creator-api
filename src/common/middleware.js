@@ -6,7 +6,7 @@ function isUserLoggedIn(req, res, next) {
     next();
   } else {
     res.status(401);
-    res.json({ error: 'user is not logged in' });
+    res.json({ error: 'User is not logged in.' });
   }
 }
 

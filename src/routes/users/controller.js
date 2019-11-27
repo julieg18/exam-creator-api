@@ -16,10 +16,10 @@ async function signUpUser(req, res) {
     const newUser = await new User(userObj).save();
     req.session.user = { userId: newUser._id };
     res.status(201);
-    res.json({ message: 'user added', newUser });
+    res.json({ message: 'User added.', newUser });
   } catch (err) {
     res.status(501);
-    res.json({ error: 'could not add user' });
+    res.json({ error: 'Could not add user.' });
   }
 }
 
@@ -30,7 +30,7 @@ async function getUser(req, res) {
     },
   } = req;
   const user = await User.findById(userId);
-  res.json({ message: 'user found', user });
+  res.json({ message: 'User found.', user });
 }
 
 async function deleteUser(req, res) {
@@ -44,11 +44,11 @@ async function deleteUser(req, res) {
     session.destroy(() => {
       res.clearCookie(SESS_NAME);
       res.status(200);
-      res.json({ message: 'user deleted', userId });
+      res.json({ message: 'User deleted.', userId });
     });
   } catch (err) {
     res.status(501);
-    res.json({ error: 'could not delete user' });
+    res.json({ error: 'Could not delete user.' });
   }
 }
 
@@ -60,11 +60,11 @@ function logoutUser(req, res) {
   session.destroy((err) => {
     if (err) {
       res.status(500);
-      res.json({ error: 'something went wrong' });
+      res.json({ error: 'Something went wrong.' });
     } else {
       res.clearCookie(SESS_NAME);
       res.status(200);
-      res.json({ message: 'user logged out', userId });
+      res.json({ message: 'User logged out.', userId });
     }
   });
 }
@@ -75,10 +75,10 @@ async function loginUser(req, res) {
     const user = await User.findOne({ email });
     req.session.user = { userId: user._id };
     res.status(200);
-    res.json({ message: 'user logged in', user });
+    res.json({ message: 'User logged in.', user });
   } catch (err) {
     res.status(501);
-    res.json({ error: 'could not login user' });
+    res.json({ error: 'Could not login user.' });
   }
 }
 
@@ -91,10 +91,10 @@ async function getUserExams(req, res) {
   try {
     const exams = await Exam.find({ creator: userId });
     res.status(200);
-    res.json({ message: 'exams found', exams });
+    res.json({ message: 'Exams found.', exams });
   } catch (err) {
     res.status(501);
-    res.json({ error: 'could not get exams' });
+    res.json({ error: 'Could not get exams.' });
   }
 }
 

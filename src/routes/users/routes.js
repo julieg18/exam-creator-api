@@ -12,6 +12,7 @@ import {
   doesSignupRequestHaveRequiredParams,
   areSignupRequestParamsCorrectType,
   areSignupRequestParamsEmpty,
+  areLoginRequestParamsEmpty,
   doesEmailAlreadyExist,
   isUsernameValid,
   isEmailValid,
@@ -48,6 +49,7 @@ userRoutes
   .post(
     isUserAlreadyLoggedIn,
     doesLoginRequestHaveRequiredParams,
+    areLoginRequestParamsEmpty,
     isEmailInDatabase,
     doesPasswordMatchAccount,
     loginUser,
