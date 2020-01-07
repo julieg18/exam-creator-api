@@ -7,20 +7,27 @@ const examObj = {
     {
       name: 'What is 2+2?',
       type: 'radio',
-      options: ['4', '6'],
-      answer: '4',
+      options: [
+        { name: '4', optionId: '123' },
+        { name: '6', optionId: '124' },
+      ],
+      answer: ['123'],
     },
     {
-      name: 'What is 4+2?',
-      type: 'radio',
-      options: ['4', '6'],
-      answer: '6',
+      name: 'Which numbers are even?',
+      type: 'checkbox',
+      options: [
+        { name: '6', optionId: '125' },
+        { name: '4', optionId: '126' },
+        { name: '5', optionId: '127' },
+      ],
+      answer: ['125', '126'],
     },
     {
       name: 'Is 7 even?',
       type: 'true_false',
       options: [],
-      answer: 'false',
+      answer: ['false'],
     },
   ],
   students: [
@@ -36,8 +43,12 @@ const examObj = {
 const questionObj = {
   name: 'What is 5-2?',
   type: 'radio',
-  options: ['4', '1', '3'],
-  answer: '3',
+  options: [
+    { name: '4', optionId: '127' },
+    { name: '3', optionId: '128' },
+    { name: '5', optionId: '129' },
+  ],
+  answer: ['129'],
 };
 
 const studentObj = {
@@ -86,7 +97,8 @@ function checkExamQuestions(questions) {
   questions.forEach((question) => {
     assert.hasAllKeys(question, ['options', 'name', 'type', 'answer', '_id']);
     assert.isArray(question.options);
-    ['name', 'type', '_id', 'answer'].forEach((prop) => {
+    assert.isArray(question.answer);
+    [('name', 'type', '_id')].forEach((prop) => {
       assert.isString(question[prop]);
     });
   });

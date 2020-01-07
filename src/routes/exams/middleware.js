@@ -9,7 +9,9 @@ import {
   doesStudentHaveRequiredParams,
   areQuestionParamsCorrectTypes,
   areStudentParamsCorrectTypes,
-  doesQuestionHaveCorrectParamsForType,
+  getCheckboxQuestionPropertyValueErrors,
+  getRadioQuestionPropertyValueErrors,
+  getTrueOrFalseQuestionPropertyValueErrors,
 } from './helper';
 
 async function checkIfExamIdIsValid(req, res, next) {
@@ -24,7 +26,7 @@ async function checkIfExamIdIsValid(req, res, next) {
 }
 
 function doesCreateExamRequestHaveRequiredParams(req, res, next) {
-  const requiredExamParams = ['creator', 'title'];
+  const requiredExamParams = ['creator', 'title', 'questions', 'students'];
   const {
     doesReqHaveRequiredParams,
     errorMessage,
@@ -205,19 +207,24 @@ function doesQuestionsArrayElementsHaveCorrectParamsForType(req, res, next) {
   const { questions } = req.body;
   const errorMessages = [];
   const typeTrueOrFalseErrors = [];
-  const typeRadioOrCheckBoxErrors = [];
+  const typeCheckBoxErrors = [];
+  const typeRadioErrors = [];
   questions.forEach((question) => {
-    const {
-      doTrueOrFalseErrorsExist,
-      doRadioOrCheckBoxErrorsExist,
-      typeTrueOrFalseErrorsArr,
-      typeRadioOrCheckBoxErrorsArr,
-    } = doesQuestionHaveCorrectParamsForType(question);
-    if (doTrueOrFalseErrorsExist) {
-      typeTrueOrFalseErrors.push(...typeTrueOrFalseErrorsArr);
-    }
-    if (doRadioOrCheckBoxErrorsExist) {
-      typeRadioOrCheckBoxErrors.push(...typeRadioOrCheckBoxErrorsArr);
+    switch (question.type) {
+      case 'true_false':
+        typeTrueOrFalseErrors.push(
+          ...getTrueOrFalseQuestionPropertyValueErrors(question),
+        );
+        break;
+      case 'checkbox':
+        typeCheckBoxErrors.push(
+          ...getCheckboxQuestionPropertyValueErrors(question),
+        );
+        break;
+      case 'radio':
+        typeRadioErrors.push(...getRadioQuestionPropertyValueErrors(question));
+        break;
+      default:
     }
   });
   if (typeTrueOrFalseErrors.length !== 0) {
@@ -226,12 +233,16 @@ function doesQuestionsArrayElementsHaveCorrectParamsForType(req, res, next) {
       `for true_false type, ${createList([...typeTrueOrFalseErrorsSet])}`,
     );
   }
-  if (typeRadioOrCheckBoxErrors.length !== 0) {
-    const typeRadioOrCheckBoxErrorsSet = new Set(typeRadioOrCheckBoxErrors);
+  if (typeRadioErrors.length !== 0) {
+    const typeRadioErrorsSet = new Set(typeRadioErrors);
     errorMessages.push(
-      `for radio or checkbox type, ${createList([
-        ...typeRadioOrCheckBoxErrorsSet,
-      ])}`,
+      `for radio type, ${createList([...typeRadioErrorsSet])}`,
+    );
+  }
+  if (typeCheckBoxErrors.length !== 0) {
+    const typeCheckBoxErrorsSet = new Set(typeCheckBoxErrors);
+    errorMessages.push(
+      `for checkbox type, ${createList([...typeCheckBoxErrorsSet])}`,
     );
   }
   if (errorMessages.length === 0) {

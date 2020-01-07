@@ -73,7 +73,7 @@ describe('/api/v1/exams', () => {
           res.should.have.status(400);
           assert.equal(
             res.body.error,
-            "questions' params must have correct values for type: for true_false type, answer must be 'true' or 'false' and options must be an empty array",
+            "questions' params must have correct values for type: for true_false type, answer must contain a value of 'true' or 'false' and options must be an empty array",
           );
           done();
         });

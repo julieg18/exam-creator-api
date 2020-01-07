@@ -33,7 +33,7 @@ describe('/api/v1/users', () => {
         body: { message, user },
       } = getUserRes;
       getUserRes.should.have.status(200);
-      assert.equal(message, 'user found');
+      assert.equal(message, 'User found.');
       checkUser(user, userSignupObj);
       assert.containsAllKeys(user, ['createdAt', 'updatedAt']);
     });
@@ -48,7 +48,7 @@ describe('/api/v1/users', () => {
           body: { error },
         } = response;
         response.should.have.status(401);
-        assert.equal(error, 'user is not logged in');
+        assert.equal(error, 'User is not logged in.');
       });
     });
 
@@ -81,7 +81,7 @@ describe('/api/v1/users', () => {
           body: { error },
         } = response;
         response.should.have.status(401);
-        assert.equal(error, 'user is not logged in');
+        assert.equal(error, 'User is not logged in.');
       });
 
       const loginRes = await server
@@ -96,7 +96,7 @@ describe('/api/v1/users', () => {
         body: { message, userId },
       } = deleteRes;
       deleteRes.should.have.status(200);
-      assert.equal(message, 'user deleted');
+      assert.equal(message, 'User deleted.');
       assert.isString(userId);
     });
   });
@@ -109,7 +109,7 @@ describe('/api/v1/users', () => {
       const { message, newUser } = res.body;
 
       res.should.have.status(201);
-      assert.equal(message, 'user added');
+      assert.equal(message, 'User added.');
       checkUser(newUser, userSignupObj);
       res.should.have.cookie(SESS_NAME);
     });
@@ -124,7 +124,7 @@ describe('/api/v1/users', () => {
             body: { error },
           } = response;
           response.should.have.status(400);
-          assert.equal(error, 'a user is already logged in');
+          assert.equal(error, 'A user is already logged in.');
         });
 
       const logoutRes = await server.post(`${apiAddress}/users/logout`);
@@ -143,7 +143,7 @@ describe('/api/v1/users', () => {
             body: { error },
           } = response;
           response.should.have.status(400);
-          assert.equal(error, 'username is required');
+          assert.equal(error, 'Username is required.');
           response.should.not.have.cookie(SESS_NAME);
         });
     });
@@ -162,7 +162,7 @@ describe('/api/v1/users', () => {
             body: { error },
           } = response;
           response.should.have.status(400);
-          assert.equal(error, 'username must be a string');
+          assert.equal(error, 'Username must be a string.');
           response.should.not.have.cookie(SESS_NAME);
         });
     });
@@ -181,7 +181,7 @@ describe('/api/v1/users', () => {
             body: { error },
           } = response;
           response.should.have.status(400);
-          assert.equal(error, 'email must not be empty');
+          assert.equal(error, 'Email must not be empty.');
           response.should.not.have.cookie(SESS_NAME);
         });
     });
@@ -200,7 +200,7 @@ describe('/api/v1/users', () => {
             body: { error },
           } = response;
           response.should.have.status(400);
-          assert.equal(error, 'email already exists');
+          assert.equal(error, 'Email already exists.');
           response.should.not.have.cookie(SESS_NAME);
         });
     });
@@ -219,7 +219,7 @@ describe('/api/v1/users', () => {
             body: { error },
           } = response;
           response.should.have.status(400);
-          assert.equal(error, 'username must not contain only whitespace');
+          assert.equal(error, 'Username must not contain only whitespace.');
           response.should.not.have.cookie(SESS_NAME);
         });
     });
@@ -238,7 +238,7 @@ describe('/api/v1/users', () => {
             body: { error },
           } = response;
           response.should.have.status(400);
-          assert.equal(error, 'invalid email');
+          assert.equal(error, 'Email is invalid.');
           response.should.not.have.cookie(SESS_NAME);
         });
     });
@@ -254,7 +254,7 @@ describe('/api/v1/users', () => {
             body: { error },
           } = response;
           response.should.have.status(400);
-          assert.equal(error, 'password length must be at least 8 characters');
+          assert.equal(error, 'Password length must be at least 8 characters.');
           response.should.not.have.cookie(SESS_NAME);
         });
     });
@@ -279,7 +279,7 @@ describe('/api/v1/users', () => {
         .send(userLoginObj);
       const { message, user } = loginRes.body;
       loginRes.should.have.status(200);
-      assert.equal(message, 'user logged in');
+      assert.equal(message, 'User logged in.');
       checkUser(user, userSignupObj);
       loginRes.should.have.cookie(SESS_NAME);
 
@@ -299,7 +299,7 @@ describe('/api/v1/users', () => {
             body: { error },
           } = response;
           response.should.have.status(400);
-          assert.equal(error, 'email is required');
+          assert.equal(error, 'Email is required.');
           response.should.not.have.cookie(SESS_NAME);
         });
     });
@@ -318,7 +318,7 @@ describe('/api/v1/users', () => {
             body: { error },
           } = response;
           response.should.have.status(400);
-          assert.equal(error, 'email not found in database');
+          assert.equal(error, 'Email is incorrect.');
           response.should.not.have.cookie(SESS_NAME);
         });
     });
@@ -337,7 +337,7 @@ describe('/api/v1/users', () => {
             body: { error },
           } = response;
           response.should.have.status(400);
-          assert.equal(error, 'password is incorrect');
+          assert.equal(error, 'Password is incorrect.');
           response.should.not.have.cookie(SESS_NAME);
         });
     });
@@ -363,7 +363,7 @@ describe('/api/v1/users', () => {
         body: { message, userId },
       } = logoutRes;
       logoutRes.should.have.status(200);
-      assert.equal(message, 'user logged out');
+      assert.equal(message, 'User logged out.');
       assert.isString(userId);
       logoutRes.should.not.have.cookie(SESS_NAME);
     });
@@ -375,7 +375,7 @@ describe('/api/v1/users', () => {
           body: { error },
         } = response;
         response.should.have.status(401);
-        assert.equal(error, 'user is not logged in');
+        assert.equal(error, 'User is not logged in.');
         response.should.not.have.cookie(SESS_NAME);
       });
     });
@@ -408,7 +408,7 @@ describe('/api/v1/users', () => {
         body: { message, exams },
       } = getExamsRes;
       getExamsRes.should.have.status(200);
-      assert.equal(message, 'exams found');
+      assert.equal(message, 'Exams found.');
       assert.isArray(exams);
       assert.isObject(exams[0]);
       checkExam(exams[0]);
@@ -426,7 +426,7 @@ describe('/api/v1/users', () => {
           body: { error },
         } = response;
         response.should.have.status(401);
-        assert.equal(error, 'user is not logged in');
+        assert.equal(error, 'User is not logged in.');
       });
 
       const loginRes = await server
