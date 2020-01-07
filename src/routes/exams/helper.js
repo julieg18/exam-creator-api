@@ -86,8 +86,8 @@ function areQuestionParamsCorrectTypes(question) {
         }
         break;
       case 'answer':
-        if (!isValueCorrectType(paramValue, 'string')) {
-          incorrectTypeParamErrs.push('answer must be a string');
+        if (!isValueCorrectType(paramValue, 'array')) {
+          incorrectTypeParamErrs.push('answer must be a array');
         }
         break;
       default:
@@ -101,33 +101,124 @@ function areQuestionParamsCorrectTypes(question) {
   };
 }
 
-function doesQuestionHaveCorrectParamsForType(question) {
-  const { type, options, answer } = question;
-  const typeTrueOrFalseErrors = [];
-  const typeRadioOrCheckBoxErrors = [];
-  if (type === 'true_false') {
-    if (answer !== 'true' && answer !== 'false') {
-      typeTrueOrFalseErrors.push("answer must be 'true' or 'false'");
-    }
-    if (options.length !== 0) {
-      typeTrueOrFalseErrors.push('options must be an empty array');
-    }
-  } else {
-    if (options.length === 0) {
-      typeRadioOrCheckBoxErrors.push('options must not be a empty array');
-    }
-    if (!options.includes(answer)) {
-      typeRadioOrCheckBoxErrors.push('options must include answer');
-    }
+function getTrueOrFalseQuestionPropertyValueErrors(question) {
+  const { options, answer } = question;
+  const errors = [];
+
+  if (answer[0] !== 'true' && answer[0] !== 'false') {
+    errors.push("answer must contain a value of 'true' or 'false'");
   }
-  const typeTrueOrFalseErrorsSet = new Set(typeTrueOrFalseErrors);
-  const typeRadioOrCheckBoxErrorsSet = new Set(typeRadioOrCheckBoxErrors);
-  return {
-    doTrueOrFalseErrorsExist: typeTrueOrFalseErrorsSet.size !== 0,
-    doRadioOrCheckBoxErrorsExist: typeRadioOrCheckBoxErrorsSet.size !== 0,
-    typeTrueOrFalseErrorsArr: [...typeTrueOrFalseErrorsSet],
-    typeRadioOrCheckBoxErrorsArr: [...typeRadioOrCheckBoxErrorsSet],
-  };
+  if (options.length !== 0) {
+    errors.push('options must be an empty array');
+  }
+
+  return errors;
+}
+
+function getRadioQuestionPropertyValueErrors(question) {
+  const { options, answer } = question;
+  const errors = [];
+
+  const areOptionsValuesCorrectType = options.every((opt) => {
+    return isValueCorrectType(opt, 'object');
+  });
+  const doOptionsObjectsHaveCorrectProps = options.every(
+    (opt) =>
+      doesObjectHaveRequiredProperties(opt, ['name', 'optionId'])
+        .doesObjHaveRequiredProps,
+  );
+  const areOptionsObjectNamesCorrectType = options.every((opt) =>
+    isValueCorrectType(opt.name, 'string'),
+  );
+  const areOptionsObjectOptionIdsCorrectType = options.every((opt) =>
+    isValueCorrectType(opt.optionId, 'string'),
+  );
+  const optionIdArray = options.map((opt) => opt.optionId);
+  const optionIdSet = new Set(optionIdArray);
+  const areOptionsObjectOptionsIdsUnique =
+    optionIdArray.length === optionIdSet.size;
+
+  const doesAnswerContainOptionId = options.some(
+    (opt) => opt.optionId === answer[0],
+  );
+
+  if (options.length === 0) {
+    errors.push('options must not be an empty array');
+  }
+  if (!areOptionsValuesCorrectType || !doOptionsObjectsHaveCorrectProps) {
+    errors.push(
+      'options must be filled with objects(each object containing a name property and a optionId property)',
+    );
+  }
+  if (!areOptionsObjectNamesCorrectType) {
+    errors.push('the options name properties must be strings');
+  }
+  if (
+    !areOptionsObjectOptionIdsCorrectType ||
+    !areOptionsObjectOptionsIdsUnique
+  ) {
+    errors.push('the options optionId properties must be unique strings');
+  }
+
+  if (!doesAnswerContainOptionId) {
+    errors.push('the options answer property must contain one optionId');
+  }
+
+  return errors;
+}
+
+function getCheckboxQuestionPropertyValueErrors(question) {
+  const { options, answer } = question;
+  const errors = [];
+
+  const areOptionsValuesCorrectType = options.every((opt) =>
+    isValueCorrectType(opt, 'object'),
+  );
+  const doOptionsObjectsHaveCorrectProps = options.every(
+    (opt) =>
+      doesObjectHaveRequiredProperties(opt, ['name', 'optionId'])
+        .doesObjHaveRequiredProps,
+  );
+  const areOptionsObjectNamesCorrectType = options.every((opt) =>
+    isValueCorrectType(opt.name, 'string'),
+  );
+  const areOptionsObjectOptionIdsCorrectType = options.every((opt) =>
+    isValueCorrectType(opt.optionId, 'string'),
+  );
+  const optionIdArray = options.map((opt) => opt.optionId);
+  const optionIdSet = new Set(optionIdArray);
+  const areOptionsObjectOptionsIdsUnique =
+    optionIdArray.length === optionIdSet.size;
+
+  const doesAnswerContainOptionIds = answer.every((string) =>
+    options.some((opt) => opt.optionId === string),
+  );
+
+  if (options.length === 0) {
+    errors.push('options must not be an empty array');
+  }
+  if (!areOptionsValuesCorrectType || !doOptionsObjectsHaveCorrectProps) {
+    errors.push(
+      'options must be filled with objects, each object containing a name property and a optionId property',
+    );
+  }
+  if (!areOptionsObjectNamesCorrectType) {
+    errors.push('the options name properties must be strings');
+  }
+  if (
+    !areOptionsObjectOptionIdsCorrectType ||
+    !areOptionsObjectOptionsIdsUnique
+  ) {
+    errors.push('the options optionId properties must be unique strings');
+  }
+
+  if (!doesAnswerContainOptionIds) {
+    errors.push(
+      'the options answer property must be filled with at least one optionId',
+    );
+  }
+
+  return errors;
 }
 
 function doesStudentHaveRequiredParams(student) {
@@ -196,7 +287,9 @@ export {
   getQuestionFromDatabase,
   doesQuestionHaveRequiredParams,
   areQuestionParamsCorrectTypes,
-  doesQuestionHaveCorrectParamsForType,
+  getCheckboxQuestionPropertyValueErrors,
+  getRadioQuestionPropertyValueErrors,
+  getTrueOrFalseQuestionPropertyValueErrors,
   doesStudentHaveRequiredParams,
   areStudentParamsCorrectTypes,
 };
