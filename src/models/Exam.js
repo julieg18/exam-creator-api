@@ -3,6 +3,11 @@ import shortid from 'shortid';
 
 const { Schema, model } = mongoose;
 
+const OptionsSchema = new Schema({
+  name: { type: String, required: true },
+  optionId: { type: String, required: true },
+});
+
 const QuestionsSchema = new Schema({
   name: {
     type: String,
@@ -12,11 +17,8 @@ const QuestionsSchema = new Schema({
     type: String,
     required: true,
   },
-  options: [{ type: String, required: true }],
-  answer: {
-    type: String,
-    required: true,
-  },
+  options: [OptionsSchema],
+  answer: [{ type: String, required: true }],
 });
 
 const StudentsSchema = new Schema({

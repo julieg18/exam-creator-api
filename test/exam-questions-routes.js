@@ -93,7 +93,7 @@ describe('/api/v1/exams/questions/:examId', () => {
     it('should throw an error if question is written incorrectly', (done) => {
       const requestObj = {
         ...questionObj,
-        answer: '78',
+        answer: ['789'],
       };
       chai
         .request(app)
@@ -103,7 +103,7 @@ describe('/api/v1/exams/questions/:examId', () => {
           res.should.have.status(400);
           assert.equal(
             res.body.error,
-            'for a question with a radio or checkbox type, options must include answer',
+            'for a question with a radio type: the options answer property must contain one optionId',
           );
           done();
         });
@@ -114,7 +114,11 @@ describe('/api/v1/exams/questions/:examId', () => {
     it('should edit a question', (done) => {
       const requestObj = {
         questionId,
-        options: ['-3', '5', '3'],
+        options: [
+          { name: '-5', optionId: '127' },
+          { name: '2', optionId: '128' },
+          { name: '5', optionId: '129' },
+        ],
       };
       chai
         .request(app)
@@ -184,7 +188,7 @@ describe('/api/v1/exams/questions/:examId', () => {
     it('should throw an error if param is wrong type', (done) => {
       const requestObj = {
         questionId,
-        answer: ['3'],
+        name: { name: 'What is 5 - 2?' },
       };
       chai
         .request(app)
@@ -192,7 +196,7 @@ describe('/api/v1/exams/questions/:examId', () => {
         .send(requestObj)
         .end((err, res) => {
           res.should.have.status(400);
-          assert.equal(res.body.error, 'answer must be a string');
+          assert.equal(res.body.error, 'name must be a string');
           done();
         });
     });
@@ -200,7 +204,7 @@ describe('/api/v1/exams/questions/:examId', () => {
     it('should throw an error if question is written incorrectly', (done) => {
       const requestObj = {
         questionId,
-        answer: '78',
+        answer: ['3'],
       };
       chai
         .request(app)
@@ -210,7 +214,7 @@ describe('/api/v1/exams/questions/:examId', () => {
           res.should.have.status(400);
           assert.equal(
             res.body.error,
-            'for a question with a radio or checkbox type, options must include answer',
+            'for a question with a radio type: the options answer property must contain one optionId',
           );
           done();
         });

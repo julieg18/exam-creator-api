@@ -7,7 +7,9 @@ import {
   isQuestionIdValid,
   getQuestionFromDatabase,
   areQuestionParamsCorrectTypes,
-  doesQuestionHaveCorrectParamsForType,
+  getCheckboxQuestionPropertyValueErrors,
+  getRadioQuestionPropertyValueErrors,
+  getTrueOrFalseQuestionPropertyValueErrors,
 } from '../helper';
 
 async function checkIfQuestionIdIsValid(req, res, next) {
@@ -79,24 +81,27 @@ function areQuestionRequestParamsCorrectTypes(req, res, next) {
 }
 
 function doesAddQuestionRequestHaveCorrectParamsForType(req, res, next) {
-  const {
-    doTrueOrFalseErrorsExist,
-    doRadioOrCheckBoxErrorsExist,
-    typeTrueOrFalseErrorsArr,
-    typeRadioOrCheckBoxErrorsArr,
-  } = doesQuestionHaveCorrectParamsForType(req.body);
-  if (!doTrueOrFalseErrorsExist && !doRadioOrCheckBoxErrorsExist) {
+  let errors = [];
+  switch (req.body.type) {
+    case 'checkbox':
+      errors = [...getCheckboxQuestionPropertyValueErrors(req.body)];
+      break;
+    case 'radio':
+      errors = [...getRadioQuestionPropertyValueErrors(req.body)];
+      break;
+    case 'true_false':
+      errors = [...getTrueOrFalseQuestionPropertyValueErrors(req.body)];
+      break;
+    default:
+  }
+  if (errors.length === 0) {
     next();
   } else {
-    const error = doTrueOrFalseErrorsExist
-      ? `for a question with a true_false type, ${createList([
-          ...typeTrueOrFalseErrorsArr,
-        ])}`
-      : `for a question with a radio or checkbox type, ${createList([
-          ...typeRadioOrCheckBoxErrorsArr,
-        ])}`;
+    const errorMessage = `for a question with a ${
+      req.body.type
+    } type: ${createList(errors)}`;
     res.status(400);
-    res.json({ error });
+    res.json({ error: errorMessage });
   }
 }
 
@@ -104,7 +109,8 @@ async function doesEditQuestionRequestHaveCorrectParamsForType(req, res, next) {
   const { examId } = req.params;
   const { questionId } = req.body;
   const questionParams = ['name', 'type', 'options', 'answer'];
-  const questionToBeEdited = await getQuestionFromDatabase(examId, questionId);
+  let questionToBeEdited = await getQuestionFromDatabase(examId, questionId);
+  questionToBeEdited = questionToBeEdited.toObject();
   const questionObject = {};
   questionParams.forEach((param) => {
     questionObject[param] = req.body[param]
@@ -113,24 +119,27 @@ async function doesEditQuestionRequestHaveCorrectParamsForType(req, res, next) {
     return param;
   });
 
-  const {
-    doTrueOrFalseErrorsExist,
-    doRadioOrCheckBoxErrorsExist,
-    typeTrueOrFalseErrorsArr,
-    typeRadioOrCheckBoxErrorsArr,
-  } = doesQuestionHaveCorrectParamsForType(questionObject);
-  if (!doTrueOrFalseErrorsExist && !doRadioOrCheckBoxErrorsExist) {
+  let errors = [];
+  switch (questionObject.type) {
+    case 'checkbox':
+      errors = [...getCheckboxQuestionPropertyValueErrors(questionObject)];
+      break;
+    case 'radio':
+      errors = [...getRadioQuestionPropertyValueErrors(questionObject)];
+      break;
+    case 'true_false':
+      errors = [...getTrueOrFalseQuestionPropertyValueErrors(questionObject)];
+      break;
+    default:
+  }
+  if (errors.length === 0) {
     next();
   } else {
-    const error = doTrueOrFalseErrorsExist
-      ? `for a question with a true_false type, ${createList([
-          ...typeTrueOrFalseErrorsArr,
-        ])}`
-      : `for a question with a radio or checkbox type, ${createList([
-          ...typeRadioOrCheckBoxErrorsArr,
-        ])}`;
+    const errorMessage = `for a question with a ${
+      questionObject.type
+    } type: ${createList(errors)}`;
     res.status(400);
-    res.json({ error });
+    res.json({ error: errorMessage });
   }
 }
 

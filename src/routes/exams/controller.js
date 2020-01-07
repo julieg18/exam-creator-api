@@ -6,10 +6,14 @@ async function addExamToDatabase(req, res) {
 
   const examQuestions = questions.map((question) => {
     const { name, type, options, answer } = question;
+    const questionOptions = options.map((opt) => ({
+      name: opt.name,
+      optionId: opt.optionId,
+    }));
     return {
       name,
       type,
-      options,
+      options: questionOptions,
       answer,
     };
   });
