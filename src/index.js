@@ -1,5 +1,6 @@
 import express from 'express';
 import mongoose from 'mongoose';
+import cors from 'cors';
 import dotenv from 'dotenv';
 import session from 'express-session';
 import bodyParser from 'body-parser';
@@ -16,6 +17,7 @@ const { SESS_NAME, SESS_SECRET, SESS_LIFETIME, DB, NODE_ENV } = process.env;
 
 const app = express();
 
+app.use(cors());
 app.use(helmet());
 
 const uri = DB;
