@@ -45,7 +45,7 @@ app.use(
       ttl: parseInt(SESS_LIFETIME, 10) / 1000,
     }),
     cookie: {
-      sameSite: true,
+      // sameSite: true,
       secure: NODE_ENV === 'production',
       maxAge: parseInt(SESS_LIFETIME, 10),
     },
