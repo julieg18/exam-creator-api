@@ -20,6 +20,10 @@ const app = express();
 app.use(cors());
 app.use(helmet());
 
+if (NODE_ENV === 'production') {
+  app.set('trust proxy', 1);
+}
+
 const uri = DB;
 mongoose.connect(uri, {
   dbName: 'exam-creator',
